@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "828854301397",
+    "firebase_url": "https://kmpl-test.firebaseio.com",
+    "project_id": "kmpl-test",
+    "storage_bucket": "kmpl-test.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:828854301397:android:ab585df64351726a",
+        "android_client_info": {
+          "package_name": "com.ak.kmpl"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "828854301397-51edus4jcqkq24fmhpujcmi2rptlki55.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ak.kmpl",
+            "certificate_hash": "27525C0A6144E723DD66106243E82CF7F0678ED0"
+          }
+        },
+        {
+          "client_id": "828854301397-em080oik5p91pnnqnq7djqt4qeabbvpc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ak.kmpl",
+            "certificate_hash": "8E5E17BD322E83A7C885829F1647E84A1C3D701C"
+          }
+        },
+        {
+          "client_id": "828854301397-0t5umf6shmshepbg27hetdctchrjqf13.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBc4gM7GXpxI-FmkixxMqkBu1yU9n-GhR4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "828854301397-0t5umf6shmshepbg27hetdctchrjqf13.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

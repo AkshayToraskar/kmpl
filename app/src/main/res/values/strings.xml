@@ -1,0 +1,95 @@
+<resources>
+    <string name="app_name">Kmpl</string>
+
+    <string-array name="vehicle_type">
+        <item>Bike</item>
+        <item>Car</item>
+    </string-array>
+
+    <!-- Strings relat
+    ed to Settings -->
+
+    <!-- Example General settings -->
+
+    <!-- Example settings for Data & Sync -->
+
+    <!-- Example settings for Notifications -->
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="action_home">Home</string>
+
+
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
+
+    <string name="slide_1_title">K M P L</string>
+    <string name="slide_1_desc">The easiest way to manage all the fuel expenses, mileage in one app!</string>
+
+    <string name="slide_2_title">Mileage</string>
+    <string name="slide_2_desc">Displays the Mileage of the vehicle and can improve your driving style!</string>
+
+    <string name="slide_3_title">Nearby Petrol Pump</string>
+    <string name="slide_3_desc">Check for the nearest fuel station within a radius of 5KMs!</string>
+
+    <string name="slide_4_title">Overview</string>
+    <string name="slide_4_desc">This Graph shows the fluctuation in the mileage obtained over the course !</string>
+
+    <string name="title_activity_maps">Nearby Petrol Pumps</string>
+
+
+    <string name="action_sign_in_short">Register</string>
+    <string name="email">Email</string>
+    <string name="minimum_password">Password too short, enter minimum 6 characters!</string>
+    <string name="auth_failed">Authentication failed, check your email and password or sign up</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="btn_login">LOGIN</string>
+    <string name="btn_link_to_register">Not a member? Get registered in Firebase now!</string>
+    <string name="btn_link_to_login">Already registered. Login Me!</string>
+    <string name="btn_forgot_password">Forgot your password?</string>
+    <string name="btn_reset_password">Reset Password</string>
+    <string name="btn_back"><![CDATA[<< Back]]></string>
+    <string name="btn_sign_out">Sign Out</string>
+    <string name="lbl_forgot_password">Forgot password?</string>
+    <string name="forgot_password_msg">We just need your registered Email Id to sent you password reset instructions.</string>
+
+
+    <string-array name="tips_tricks">
+        <item><![CDATA[ <b>Title2</b><br><br> Text ]]></item>
+        <item><![CDATA[ <b>Drive smoothly</b><br><br>  Aggressive acceleration and braking significantly increase the fuel consumption of your car. Develop a smoother driving style whereby you accelerate and decelerate in a linear and smooth manner. How you drive is very important to FE. ]]></item>
+        <item><![CDATA[ <b>Avoid clutch riding</b><br><br> Driving with your foot on the clutch results in “wastage” of engine power, which in turn increases your fuel consumption and wears out your clutch rapidly. Do not keep your foot on the clutch, except for when changing gears. ]]></item>
+        <item><![CDATA[ <b>Minimise Idling</b><br><br> If your car is going to be stationary for an extended period of time, switch the engine off. ]]></item>
+        <item><![CDATA[ <b>Choosing the right gear</b><br><br> Being in a higher gear at too low a speed, or in a lower gear at a very high speed increase your fuel consumption. It is important to shift up as “early” as possible without straining the engine. For most cars, the ideal shift point would be anywhere between 1500 – 2000 rpm. ]]></item>
+        <item><![CDATA[ <b>Maintain a constant speed</b><br><br> Varying speeds do not make the car as efficient as a constant speed will. Especially when out on the open road, try to maintain a consistent rate of travel. ]]></item>
+        <item><![CDATA[ <b>The Optimum speed</b><br><br> Aerodynamic resistance increases exponentially with speed. For e.g. at speeds over a 100 km/h, your car will consume a lot more fuel than at 80 – 90 km/h. Keep within this limit to maximize the FE of your car. ]]></item>
+        <item><![CDATA[ <b>A safe distance</b><br><br> Maintaining a healthy distance between your car and the one ahead is not only safer, but also leads to higher FE. This gives you a higher reaction time, better visibility and a smoother drive. Aggressive braking has a detrimental effect on your cars fuel efficiency. ]]></item>
+        <item><![CDATA[ <b>Around the corner</b><br><br> Short trips invariably make your car consume a lot more fuel. The primary reason is that every engine has an optimum running temperature, and very short distances will almost certainly result in your car running at a cold temperature for a majority of the distance. ]]></item>
+        <item><![CDATA[ <b>Windows drag</b><br><br> At high speeds, open windows can affect the cars aerodynamic efficiency. It is better to keep the windows rolled up and the air-conditioner on at speeds over a 100 km/h. ]]></item>
+        <item><![CDATA[ <b>The honest petrol pump</b><br><br> Considering the high amount of fuel adulteration and other fuel-industry malpractices, we highly recommend you to choose the right petrol pump. Tampered meters that result in under-filling, misappropriating bills and selling adulterated fuel are some of the most common malpractices. Company-owned filling stations are the best option, though there are some honest privately-owned petrol pumps also. Look around and opt for an honest reputable petrol pump. This alone can account for upto a 10% difference in your fuel efficiency. ]]></item>
+        <item><![CDATA[ <b>Appropriate tyre pressures</b><br><br> It is very important to maintain manufacturer-recommended tyre pressures to optimize the level of rolling resistance. Tire pressures can also be increased by1 - 2 psi if you live in a city with smooth roads. Please do not exceed this limit since it can cause uneven wear. ]]></item>
+        <item><![CDATA[ <b>Keep the car well maintained</b><br><br> Your car will gulp fuel voraciously if it is not in the right state of tune. Make it a point to keep your air-filters clean, engine oil changed and your engine healthy by sticking to the manufacturer recommended maintenance intervals. ]]></item>
+        <item><![CDATA[ <b>Upsized tyres</b><br><br> Wider tyres increase rolling resistance and rotating mass, thus hindering FE. Do not oversize your tyres. ]]></item>
+        <item><![CDATA[ <b>Light weight</b><br><br> Weight has to be carried around, and will result in additional work for the engine. Unload any unnecessary cargo / baggage etc. to keep your car as light as possible. ]]></item>
+        <item><![CDATA[ <b>The right fuel for premium cars</b><br><br> High-compression engines do not operate properly on the regular octane fuel available in India. To improve efficiency, it is important to use manufacturer-recommended grades of petrol. ]]></item>
+        <item><![CDATA[ <b>Recommended fuel additives</b><br><br> Some makes of cars (e.g. Opel Astra) are not able to run optimally on the Indian fuel quality, and their manufacturers recommend fuel additives to keep the fuel system clean. If your car came with this instruction, make use of the recommended fuel additives. ]]></item>
+        <item><![CDATA[ <b>Car Pool</b><br><br> Travel along with your neighbours / friends / relatives if the office timings and destinations are alike. ]]></item>
+        <item><![CDATA[ <b>Keep a FE car</b><br><br> Why use the guzzling SUV when your hatchback serves the purpose for daily running? ]]></item>
+        <item><![CDATA[ <b>Plan your trips to avoid traffic</b><br><br> You can beat rush-hour traffic by traveling either before or after peak hours. ]]></item>
+        <item><![CDATA[ <b>Club tasks together</b><br><br> Perform more tasks per trip, saving the need for repeated trips to the same destination. ]]></item>
+        <item><![CDATA[ <b>Walk it up</b><br><br> If the distance is very short, consider walking. It is healthy and saves fuel. ]]></item>
+        <item><![CDATA[ <b>Title2</b><br><br> Text ]]></item>
+        <item><![CDATA[ <b>Title2</b><br><br> Text ]]></item>
+        <item><![CDATA[ <b>Title2</b><br><br> Text ]]></item>
+        <item><![CDATA[ <b>Title2</b><br><br> Text ]]></item>
+        <item><![CDATA[ <b>Title2</b><br><br> Text ]]></item>
+        <item><![CDATA[ <b>Title2</b><br><br> Text ]]></item>
+        <item><![CDATA[ <b>Title2</b><br><br> Text ]]></item>
+        <item><![CDATA[ <b>Title2</b><br><br> Text ]]></item>
+        <item><![CDATA[ <b>Title2</b><br><br> Text ]]></item>
+    </string-array>
+
+</resources>
