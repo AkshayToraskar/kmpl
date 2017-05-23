@@ -26,19 +26,21 @@ import com.ak.kmpl.R;
 import com.ak.kmpl.activity.AddVehicleActivity;
 import com.ak.kmpl.app.PrefManager;
 import com.ak.kmpl.inteface.AddVehicleData;
-import com.ak.kmpl.model.Vehicle;
-import com.ak.kmpl.model.VehicleRecords;
-import com.orm.query.Select;
+import com.ak.kmpl.realm_model.Vehicle;
+import com.ak.kmpl.realm_model.VehicleRecords;
+
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.realm.RealmList;
 
 /**
  * Created by WDIPL44 on 3/9/2016.
  */
 public class VehicleListAdapter extends RecyclerView.Adapter<VehicleListAdapter.MyViewHolder> {
 
-    private ArrayList<Vehicle> mDataset;
+    private List<Vehicle> mDataset;
     private final static int FADE_DURATION = 1000; // in milliseconds
     private Context mContext;
     public ImageView ivEdit;
@@ -86,20 +88,20 @@ public class VehicleListAdapter extends RecyclerView.Adapter<VehicleListAdapter.
                 spinner.setSelection(pos);
 */
 
-         ///   String spinnerPosition = (String) spinner.getSelectedItem();
-          //  prfManager.setSpinnerPosition(Integer.parseInt(spinnerPosition));
-           // spinner.setSelection(prfManager.getSpinnerPosition());
+            ///   String spinnerPosition = (String) spinner.getSelectedItem();
+            //  prfManager.setSpinnerPosition(Integer.parseInt(spinnerPosition));
+            // spinner.setSelection(prfManager.getSpinnerPosition());
 
             //spinner.setSelection(position);
 
-           // String spinnerPosition = (String) spinner.getSelectedItem();
-          //  prfManager.setSpinnerPosition(Integer.parseInt(spinnerPosition));
+            // String spinnerPosition = (String) spinner.getSelectedItem();
+            //  prfManager.setSpinnerPosition(Integer.parseInt(spinnerPosition));
 
 
             //vehicle.setServiceReminder(prfManager.getSpinnerPosition());
 
 
-          /////  spinner.setOnItemSelectedListener(this);
+            /////  spinner.setOnItemSelectedListener(this);
 
             /// spinner = (MaterialSpinner) itemView.findViewById(R.id.spinner);
             /// spinner.setItems("1000", "2500", "5000", "8500", "10000", "15000", "20000", "40000", "50000");
@@ -134,7 +136,7 @@ public class VehicleListAdapter extends RecyclerView.Adapter<VehicleListAdapter.
     }
 
 
-    public VehicleListAdapter(ArrayList<Vehicle> mDataset, AddVehicleData addVehicleData) {
+    public VehicleListAdapter(List<Vehicle> mDataset, AddVehicleData addVehicleData) {
         this.mDataset = mDataset;
         this.addVehicleData = addVehicleData;
     }
@@ -165,7 +167,7 @@ public class VehicleListAdapter extends RecyclerView.Adapter<VehicleListAdapter.
 
         holder.tvName.setText(" " + mDataset.get(position).getName());
 
-        if (mDataset.get(position).getType().equalsIgnoreCase("car")) {
+        if (mDataset.get(position).getType() == 0) {
             holder.ivType.setImageResource(R.drawable.car_icon);
         } else {
             holder.ivType.setImageResource(R.drawable.bike_icon);
@@ -233,30 +235,31 @@ public class VehicleListAdapter extends RecyclerView.Adapter<VehicleListAdapter.
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                String selState = (String) holder.spinner.getSelectedItem();
+                //String selState = (String) holder.spinner.getSelectedItem();
 
-                Vehicle vehc=mDataset.get(position);
+                //Vehicle vehc=mDataset.get(position);
                 //vehc.setServiceReminder(holder.spinner.getSelectedItemPosition());
-                vehc.setServiceReminder(Integer.parseInt(selState) + vehc.getLastReading());
-                vehc.setSpinnerPos(holder.spinner.getSelectedItemPosition());
-                vehc.setSpinnerItem(Integer.parseInt(selState));
-                vehc.save();
+                //vehc.setServiceReminder(Integer.parseInt(selState) + (int)vehc.getLastReading());
+                // vehc.setSpinnerPos(holder.spinner.getSelectedItemPosition());
+                //vehc.setSpinnerPos(Integer.parseInt(selState));
+                //vehc.save();
 
 
                 //changes
                 //prfManager.setServiceInterval((Integer) holder.spinner.getItemAtPosition(pos));
 
-                String item = String.valueOf(parent.getSelectedItem());
+                //  String item = String.valueOf(parent.getSelectedItem());
 
 
-               // prfManager.setServiceInterval(Integer.parseInt(selState));
-                Log.d("","spinner position " + item);
+                // prfManager.setServiceInterval(Integer.parseInt(selState));
+                //   Log.d("","spinner position " + item);
 
                 //vehicle = new Vehicle();
                 //vehicle.setServiceReminder(Integer.parseInt(item));
                 //prfManager.setSpinnerPosition(Integer.parseInt(item));
 
-                Snackbar.make(view, "Reminder set after every " + selState + " Kms", Snackbar.LENGTH_LONG).show();            }
+                // Snackbar.make(view, "Reminder set after every " + selState + " Kms", Snackbar.LENGTH_LONG).show();
+            }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -302,20 +305,20 @@ public class VehicleListAdapter extends RecyclerView.Adapter<VehicleListAdapter.
                     public void onClick(DialogInterface dialog, int which) {
 
 
-                        String vid = String.valueOf(mDataset.get(position).getId());
+                        /*String vid = String.valueOf(mDataset.get(position).getId());
                         List<VehicleRecords> vehiclesRecords = Select.from(VehicleRecords.class)
                                 .orderBy("id Desc")
                                 .where("V_Id = ?", new String[]{vid}).list();
 
                         for (int i = 0; i < vehiclesRecords.size(); i++) {
                             vehiclesRecords.get(i).delete();
-                        }
+                        }*/
 
                         if (position == prfManager.getDefaultVehicle()) {
                             prfManager.setDefaultVehicle(0);
                         }
 
-                        mDataset.get(position).delete();
+                        //mDataset.get(position).delete();
                         mDataset.remove(position);
                         notifyDataSetChanged();
                         dialog.dismiss();

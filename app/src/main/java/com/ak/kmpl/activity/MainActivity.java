@@ -12,8 +12,7 @@ import android.widget.Toast;
 
 import com.ak.kmpl.R;
 import com.ak.kmpl.model.KmplBackup;
-import com.ak.kmpl.model.Vehicle;
-import com.ak.kmpl.model.VehicleRecords;
+
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,6 +23,8 @@ import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import me.anwarshahriar.calligrapher.Calligrapher;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,10 +33,12 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseUser mFirebaseUser;
     private DatabaseReference mFirebaseDatabase;
     private FirebaseDatabase mFirebaseInstance;
-ProgressDialog dialog;
+    ProgressDialog dialog;
     String mUsername, mPhotoUrl;
 
+    @BindView(R.id.civProfile)
     CircularImageView ivProfile;
+    @BindView(R.id.tvUserName)
     TextView tvUsername;
 
     String userId;
@@ -45,18 +48,16 @@ ProgressDialog dialog;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        ButterKnife.bind(this);
         Calligrapher calligrapher = new Calligrapher(this);
         calligrapher.setFont(this, "CircularAir-Light.otf", true);
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
-        dialog=new ProgressDialog(this);
+        dialog = new ProgressDialog(this);
 
 
-        ivProfile = (CircularImageView) findViewById(R.id.civProfile);
-        tvUsername = (TextView) findViewById(R.id.tvUserName);
 
 
         if (mFirebaseUser == null) {
@@ -70,7 +71,7 @@ ProgressDialog dialog;
             if (mFirebaseUser.getPhotoUrl() != null) {
                 mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
 
-                tvUsername.setText("" + mUsername);
+              //  tvUsername.setText("" + mUsername);
 
                 Glide.with(this)
                         .load(mPhotoUrl)
@@ -157,16 +158,16 @@ ProgressDialog dialog;
 
 
         // User user = new User(name, email);
-        List<Vehicle> vehiclesList = Vehicle.listAll(Vehicle.class);
-        List<VehicleRecords> vehiclesRecords = VehicleRecords.listAll(VehicleRecords.class);
+        //List<Vehicle> vehiclesList = Vehicle.listAll(Vehicle.class);
+
 
         KmplBackup kmplBackup = new KmplBackup();
-        kmplBackup.setVehicleRecords(vehiclesRecords);
-        kmplBackup.setVehicles(vehiclesList);
+        //kmplBackup.setVehicleRecords(vehiclesRecords);
+        //kmplBackup.setVehicles(vehiclesList);
 
         //DatabaseReference dataRef =  mFirebaseInstance.getReference("Users");
 
-        mFirebaseDatabase.child(userId).setValue(kmplBackup,new DatabaseReference.CompletionListener() {
+        mFirebaseDatabase.child(userId).setValue(kmplBackup, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
 
@@ -174,15 +175,14 @@ ProgressDialog dialog;
 
                 if (databaseError != null) {
                     System.out.println("Data could not be saved " + databaseError.getMessage());
-                    Toast.makeText(MainActivity.this,"Some Error occoured..!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Some Error occoured..!", Toast.LENGTH_SHORT).show();
 
                 } else {
                     System.out.println("Data saved successfully.");
-                    Toast.makeText(MainActivity.this,"Successfully data uploaded",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Successfully data uploaded", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
 
 
         //addUserChangeListener();

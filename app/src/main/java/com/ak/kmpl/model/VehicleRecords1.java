@@ -1,13 +1,13 @@
 package com.ak.kmpl.model;
 
-import com.orm.SugarRecord;
+
 
 /**
  * Created by WDIPL44 on 7/26/2016.
  */
-public class VehicleRecords  extends SugarRecord {
+public class VehicleRecords1   {
 
-    public VehicleRecords()
+    public VehicleRecords1()
     {
 
     }

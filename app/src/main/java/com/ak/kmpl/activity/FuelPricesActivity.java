@@ -15,9 +15,14 @@ import android.widget.Toast;
 import com.ak.kmpl.R;
 import com.ak.kmpl.app.AppConfig;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class FuelPricesActivity extends AppCompatActivity {
 
+    @BindView(R.id.wvFuelPrice)
     WebView webView;
+    @BindView(R.id.llNoRecord)
     LinearLayout linearLayout;
 ProgressBar pb;
 
@@ -26,8 +31,7 @@ ProgressBar pb;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fuel_prices);
 
-        webView = (WebView) findViewById(R.id.wvFuelPrice);
-        linearLayout = (LinearLayout) findViewById(R.id.llNoRecord);
+        ButterKnife.bind(this);
 
        // pb=(ProgressBar)findViewById(R.id.progressBar);
 

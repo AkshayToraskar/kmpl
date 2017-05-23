@@ -16,7 +16,8 @@ import android.widget.TextView;
 
 import com.ak.kmpl.R;
 import com.ak.kmpl.activity.AddRecordsActivity;
-import com.ak.kmpl.model.VehicleRecords;
+import com.ak.kmpl.realm_model.VehicleRecords;
+
 
 import java.util.ArrayList;
 
@@ -83,7 +84,7 @@ public class VehicleRecordAdapter extends RecyclerView.Adapter<VehicleRecordAdap
 
 
 
-        holder.tvName.setText("Vehicle Name: " + mDataset.get(position).getvName());
+        holder.tvName.setText("Vehicle Name: " + mDataset.get(position).getId());
         holder.tvName.setTypeface(tf_regular);
 
         holder.tvDate.setText("Date: " + mDataset.get(position).getDate());

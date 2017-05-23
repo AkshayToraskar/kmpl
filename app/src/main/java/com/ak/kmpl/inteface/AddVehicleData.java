@@ -1,6 +1,7 @@
 package com.ak.kmpl.inteface;
 
-import com.ak.kmpl.model.Vehicle;
+
+import com.ak.kmpl.realm_model.Vehicle;
 
 /**
  * Created by WDIPL44 on 8/4/2016.

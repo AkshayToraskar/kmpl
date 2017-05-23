@@ -1,6 +1,5 @@
 package com.ak.kmpl.activity;
 
-import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -20,82 +19,51 @@ import com.ak.kmpl.adapter.VehicleListAdapter;
 import com.ak.kmpl.app.PrefManager;
 import com.ak.kmpl.app.TextValidation;
 import com.ak.kmpl.inteface.AddVehicleData;
-import com.ak.kmpl.model.Vehicle;
+import com.ak.kmpl.realm_model.Vehicle;
+
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmList;
 import me.anwarshahriar.calligrapher.Calligrapher;
-/*import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.OnNeverAskAgain;
-import permissions.dispatcher.OnPermissionDenied;
-import permissions.dispatcher.RuntimePermissions;*/
 
-//@RuntimePermissions
 public class AddVehicleActivity extends AppCompatActivity implements AddVehicleData {
 
-
-  /*  @NeedsPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-    void showgps() {
-
-
-    }
-
-
-    @OnPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION)
-    void showDeniedForgps() {
-        //Toast.makeText(this, R.string.permission_camera_denied, Toast.LENGTH_SHORT).show();
-
-
-    }
-
-    @OnNeverAskAgain(Manifest.permission.ACCESS_FINE_LOCATION)
-    void showNeverAskForgps() {
-        //Toast.makeText(this, R.string.permission_camera_neverask, Toast.LENGTH_SHORT).show();
-    }*/
-/*
-    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    void writeData() {
-
-    }
-
-    @OnPermissionDenied(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    void showDeniedForWrite() {
-        //Toast.makeText(this, R.string.permission_camera_denied, Toast.LENGTH_SHORT).show();
-
-
-    }
-
-    @OnNeverAskAgain(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    void showNeverAskForWrite() {
-        //Toast.makeText(this, R.string.permission_camera_neverask, Toast.LENGTH_SHORT).show();
-    }*/
+    @BindView(R.id.etVehicleName)
     EditText etAddVehicle;//,etLastReading;
+    @BindView(R.id.spnVehicleType)
     Spinner spnVehType;
+    @BindView(R.id.rlAddVehicle)
     RelativeLayout rlAddVehicle;
-    Vehicle vehicle;
+    @BindView(R.id.rvVehicleList)
     RecyclerView rvVehicleList;
-    List<Vehicle> vehiclesList;
-    ArrayList<Vehicle> vehLst;
+    @BindView(R.id.btnDone)
+    Button btnDone;
+    public static LinearLayout llAddData;
     private RecyclerView.LayoutManager mLayoutManager;
     public static RecyclerView.Adapter mAdapter;
+
+    Vehicle vehicle;
+    List<Vehicle> vehLst;
     public boolean EDITDATA = false;
     public AddVehicleData addVehicleData = null;
-    Button btnDone;
-
-    public Vehicle vehc;
     TextValidation tv;
     private PrefManager prefManager;
-    public static LinearLayout llAddData;
 
-    private String[] state = { "1000", "2500", "5000", "8500", "10000", "15000", "20000", "40000", "50000"};
-
+    private String[] state = {"1000", "2500", "5000", "8500", "10000", "15000", "20000", "40000", "50000"};
+    Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_vehicle);
-
+        realm = Realm.getDefaultInstance();
+        ButterKnife.bind(this);
         Calligrapher calligrapher = new Calligrapher(this);
         calligrapher.setFont(this, "CircularAir-Light.otf", true);
 
@@ -108,31 +76,24 @@ public class AddVehicleActivity extends AppCompatActivity implements AddVehicleD
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
+            //vehiclesList = Vehicle.listAll(Vehicle.class);
+            //vehLst.addAll(vehiclesList);
             // finish();
         }
 
-      //  AddVehicleActivityPermissionsDispatcher.showgpsWithCheck(this);
-       // AddVehicleActivityPermissionsDispatcher.writeDataWithCheck(this);
-
-
+        //  AddVehicleActivityPermissionsDispatcher.showgpsWithCheck(this);
+        // AddVehicleActivityPermissionsDispatcher.writeDataWithCheck(this);
 
 
         getSupportActionBar().setTitle("Add Vehicle");
 
-        etAddVehicle = (EditText) findViewById(R.id.etVehicleName);
-        //etLastReading = (EditText) findViewById(R.id.etLastReading);
-        spnVehType = (Spinner) findViewById(R.id.spnVehicleType);
-        rlAddVehicle = (RelativeLayout) findViewById(R.id.rlAddVehicle);
-        rvVehicleList = (RecyclerView) findViewById(R.id.rvVehicleList);
-        btnDone = (Button) findViewById(R.id.btnDone);
 
-        llAddData=(LinearLayout)findViewById(R.id.llAddData);
+        llAddData = (LinearLayout) findViewById(R.id.llAddData);
 
 
         vehLst = new ArrayList<>();
+        vehLst.addAll(realm.where(Vehicle.class).findAll());
 
-        vehiclesList = Vehicle.listAll(Vehicle.class);
-        vehLst.addAll(vehiclesList);
 
         addVehicleData = this;
 
@@ -151,7 +112,7 @@ public class AddVehicleActivity extends AppCompatActivity implements AddVehicleD
         int id = item.getItemId();
         switch (id) {
             case android.R.id.home:
-                finishAct();
+                //finishAct();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -167,38 +128,18 @@ public class AddVehicleActivity extends AppCompatActivity implements AddVehicleD
                     return;
                 }
 
-                List<Vehicle> vehiclesRecords = Vehicle.find(Vehicle.class, "Name = ?", etAddVehicle.getText().toString());
 
-                if (vehiclesRecords.size() > 0 && EDITDATA == false) {
+                vehicle = realm.where(Vehicle.class).equalTo("name", etAddVehicle.getText().toString()).findFirst();
 
+                if (vehicle != null && EDITDATA == false) {
                     Snackbar snackbar = Snackbar.make(rlAddVehicle, "Vehicle Already Present with this name", Snackbar.LENGTH_LONG);
                     snackbar.show();
 
-                } else if (EDITDATA == false) {
-
-
-                    vehicle = new Vehicle();
-                    vehicle.setName(etAddVehicle.getText().toString());
-                    vehicle.setType(spnVehType.getSelectedItem().toString());
-                    vehicle.setLastReading(0);
-                    vehicle.setServiceReminder(0);
-                    vehicle.setSpinnerItem(0);
-                    vehicle.setLastLitre(0);
-                    vehicle.save();
-
-                    prefManager.setServiceInterval(0);
-                    prefManager.setFirstTimeLaunch(false);
                     //startActivity(new Intent(AddVehicleActivity.this,ShowRecorsActivity.class));
-                    finishAct();
+                    //finishAct();
 
-                } else if (EDITDATA == true) {
-
-                    vehc.setName(etAddVehicle.getText().toString());
-                    vehc.setType(spnVehType.getSelectedItem().toString());
-                   // vehicle.setServiceReminder(1000);
-                    vehc.save();
-                    finishAct();
                 }
+                finishAct();
 
                 break;
         }
@@ -209,8 +150,8 @@ public class AddVehicleActivity extends AppCompatActivity implements AddVehicleD
     public void getVehicleData(Vehicle veh) {
 
         etAddVehicle.setText(veh.getName());
-        vehc = veh;
-        if (veh.getType().equalsIgnoreCase("bike")) {
+        vehicle = veh;
+        if (veh.getType() == 1) {
             spnVehType.setSelection(0);
         } else {
             spnVehType.setSelection(1);
@@ -219,13 +160,38 @@ public class AddVehicleActivity extends AppCompatActivity implements AddVehicleD
         EDITDATA = true;
     }
 
-    public void finishAct()
-    {
-        Intent i = new Intent(AddVehicleActivity.this, MainActivity.class);
+    public void finishAct() {
+
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+
+                if(vehicle==null){
+                    vehicle=realm.createObject(Vehicle.class, new Date().getTime());
+
+                }
+
+
+                if (EDITDATA == false) {
+                    vehicle.setLastReading(0);
+                    vehicle.setServiceReminder(0);
+                    vehicle.setLastLitre(0);
+                    prefManager.setServiceInterval(0);
+                    prefManager.setFirstTimeLaunch(false);
+                }
+
+                vehicle.setName(etAddVehicle.getText().toString());
+                vehicle.setType(spnVehType.getSelectedItemPosition());
+
+                realm.copyToRealmOrUpdate(vehicle);
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+
+        Intent i = new Intent(AddVehicleActivity.this, ShowRecorsActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
     }
-
 
 
 }

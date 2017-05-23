@@ -1,14 +1,13 @@
 package com.ak.kmpl.model;
 
-import com.orm.SugarRecord;
-import com.orm.dsl.Unique;
+
 
 /**
  * Created by WDIPL44 on 7/26/2016.
  */
-public class Vehicle extends SugarRecord {
+public class Vehicle1 {
 
-    @Unique
+
     String name;
     String type;
     int lastReading;
@@ -37,7 +36,7 @@ public class Vehicle extends SugarRecord {
 
 
 
-    public Vehicle() {
+    public Vehicle1() {
     }
 
 

@@ -13,17 +13,17 @@ import static com.ak.kmpl.app.AppConfig.TAG;
 
 //import static com.androidmastermind.gplaces.AppConfig.TAG;
 
-public class AppController extends com.orm.SugarApp {
+public class AppController {
 
     private RequestQueue mRequestQueue;
     private static AppController mInstance;
 
-    @Override
+   /* @Override
     public void onCreate() {
         super.onCreate();
         mInstance = this;
 
-    }
+    }*/
 
     public static synchronized AppController getInstance() {
         return mInstance;
@@ -31,7 +31,7 @@ public class AppController extends com.orm.SugarApp {
 
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
-            mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+           // mRequestQueue = Volley.newRequestQueue(getApplicationContext());
         }
         return mRequestQueue;
     }

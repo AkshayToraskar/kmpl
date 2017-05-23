@@ -23,27 +23,37 @@ import android.widget.TextView;
 import com.ak.kmpl.R;
 import com.ak.kmpl.app.PrefManager;
 
-public class WelcomeActivity extends AppCompatActivity {
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-    private ViewPager viewPager;
+public class WelcomeActivity extends AppCompatActivity {
+    @BindView(R.id.view_pager)
+    ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
-    private LinearLayout dotsLayout;
+
+    @BindView(R.id.layoutDots)
+    LinearLayout dotsLayout;
+
     private TextView[] dots;
     private int[] layouts;
-    private Button btnNext;
+    @BindView(R.id.btn_next)
+    Button btnNext;
     private PrefManager prefManager;
     Animation anim;
-    ImageView w1,w2,w3;
+    ImageView w1, w2, w3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.activity_welcome);
+        ButterKnife.bind(this);
+
         // Checking for first time launch - before calling setContentView()
         prefManager = new PrefManager(this);
         if (!prefManager.isFirstTimeLaunch()) {
             //launchHomeScreen();
-            startActivity(new Intent(WelcomeActivity.this,ShowRecorsActivity.class));
+            startActivity(new Intent(WelcomeActivity.this, ShowRecorsActivity.class));
 
             finish();
         }
@@ -53,12 +63,9 @@ public class WelcomeActivity extends AppCompatActivity {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
 
-        setContentView(R.layout.activity_welcome);
 
-        viewPager = (ViewPager) findViewById(R.id.view_pager);
-        dotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
+
         //btnSkip = (Button) findViewById(R.id.btn_skip);
-        btnNext = (Button) findViewById(R.id.btn_next);
 
 
         // layouts of all welcome sliders
@@ -144,37 +151,39 @@ public class WelcomeActivity extends AppCompatActivity {
             if (position == layouts.length - 1) {
                 // last page. make button text to GOT IT
                 btnNext.setText(getString(R.string.start));
-               // btnSkip.setVisibility(View.GONE);
+                // btnSkip.setVisibility(View.GONE);
             } else {
                 // still pages are left
                 btnNext.setText(getString(R.string.next));
-               // btnSkip.setVisibility(View.VISIBLE);
+                // btnSkip.setVisibility(View.VISIBLE);
             }
         }
-//animation on WS images
+
+        //animation on WS images
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             // positionOffset ranges from 0.0f to 1.0f, multiply it by 180.0f to rotate the
             // icon clockwise, making the icon appear flipped when scrolled to the last page.
             // Multiply by -180.0f to rotate counter-clockwise.
-          //  w1 = (ImageView)findViewById(R.id.w1);
-           // w1.setRotation(positionOffset *
-            if(position == 0) {
+            //  w1 = (ImageView)findViewById(R.id.w1);
+            // w1.setRotation(positionOffset *
+            if (position == 0) {
                 w1 = (ImageView) findViewById(R.id.w1);
                 w1.setRotation(positionOffset * 540.0f);
 
             }
-            if(position == 1) {
+            if (position == 1) {
                 w2 = (ImageView) findViewById(R.id.w2);
                 w2.setRotation(positionOffset * 540.0f);
             }
-            if(position == 2) {
+            if (position == 2) {
                 w3 = (ImageView) findViewById(R.id.w3);
                 w3.setRotation(positionOffset * 540.0f);
             }
-           // w3 = (ImageView)findViewById(R.id.w3);
-           // w3.setRotation(positionOffset * 360.0f);
+            // w3 = (ImageView)findViewById(R.id.w3);
+            // w3.setRotation(positionOffset * 360.0f);
         }
+
         /*@Override
         public void onPageScrolled(int arg0, float arg1, int arg2) {
 

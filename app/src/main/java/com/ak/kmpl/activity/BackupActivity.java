@@ -12,8 +12,9 @@ import android.widget.TextView;
 
 import com.ak.kmpl.R;
 import com.ak.kmpl.model.KmplBackup;
-import com.ak.kmpl.model.Vehicle;
-import com.ak.kmpl.model.VehicleRecords;
+
+import com.ak.kmpl.realm_model.Vehicle;
+import com.ak.kmpl.realm_model.VehicleRecords;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -21,7 +22,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.orm.query.Select;
+
 
 import java.util.List;
 
@@ -111,12 +112,12 @@ public class BackupActivity extends AppCompatActivity {
         }
 
         // User user = new User(name, email);
-        vehiclesList = Vehicle.listAll(Vehicle.class);
-        List<VehicleRecords> vehiclesRecords = VehicleRecords.listAll(VehicleRecords.class);
+        //vehiclesList = Vehicle.listAll(Vehicle.class);
+        //List<VehicleRecords> vehiclesRecords = VehicleRecords.listAll(VehicleRecords.class);
 
         KmplBackup kmplBackup=new KmplBackup();
-        kmplBackup.setVehicleRecords(vehiclesRecords);
-        kmplBackup.setVehicles(vehiclesList);
+        //kmplBackup.setVehicleRecords(vehiclesRecords);
+       // kmplBackup.setVehicles(vehiclesList);
 
         mFirebaseDatabase.child(userId).setValue(kmplBackup);
 

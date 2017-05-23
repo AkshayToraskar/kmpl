@@ -8,22 +8,22 @@ import java.util.List;
 
 public class KmplBackup {
 
-    List<Vehicle> vehicles;
-    List<VehicleRecords> vehicleRecords;
+    List<Vehicle1> vehicles;
+    List<VehicleRecords1> vehicleRecords;
 
-    public List<Vehicle> getVehicles() {
+    public List<Vehicle1> getVehicles() {
         return vehicles;
     }
 
-    public void setVehicles(List<Vehicle> vehicles) {
+    public void setVehicles(List<Vehicle1> vehicles) {
         this.vehicles = vehicles;
     }
 
-    public List<VehicleRecords> getVehicleRecords() {
+    public List<VehicleRecords1> getVehicleRecords() {
         return vehicleRecords;
     }
 
-    public void setVehicleRecords(List<VehicleRecords> vehicleRecords) {
+    public void setVehicleRecords(List<VehicleRecords1> vehicleRecords) {
         this.vehicleRecords = vehicleRecords;
     }
 }

@@ -22,12 +22,16 @@ import com.ak.kmpl.adapter.VehicleRecordAdapter;
 
 import com.ak.kmpl.app.MyRecyclerScroll;
 import com.ak.kmpl.inteface.FilterData;
-import com.ak.kmpl.model.VehicleRecords;
-import com.orm.query.Select;
+import com.ak.kmpl.realm_model.Vehicle;
+import com.ak.kmpl.realm_model.VehicleRecords;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmList;
+import io.realm.Sort;
 import me.anwarshahriar.calligrapher.Calligrapher;
 
 /**
@@ -45,8 +49,8 @@ public class RecordsFragment extends Fragment implements FilterData {
     LinearLayout llNoRecord;
     public static FilterData filterDataRecordFragment = null;
 
-    public static String vId;
-
+    public static long vId;
+    Realm realm;
 
     public RecordsFragment() {
         // Required empty public constructor
@@ -58,10 +62,10 @@ public class RecordsFragment extends Fragment implements FilterData {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-       // LayoutInflater mInflater = getActivity().getLayoutInflater();
+        // LayoutInflater mInflater = getActivity().getLayoutInflater();
         //View view = mInflater.inflate(R.layout.fragment_records, null);
         view = inflater.inflate(R.layout.fragment_records, container, false);
-
+        realm = Realm.getDefaultInstance();
         Calligrapher calligrapher = new Calligrapher(getContext());
         calligrapher.setFont((Activity) getContext(), "CircularAir-Light.otf", true);
 
@@ -98,14 +102,22 @@ public class RecordsFragment extends Fragment implements FilterData {
     }
 
 
-    public void notifyDataRecords(String vid) {
+    public void notifyDataRecords(long vid) {
         //List<VehicleRecords> vehiclesRecords = VehicleRecords.find(VehicleRecords.class, "V_Id = ?", String.valueOf(vehiclesNameList.get(spnVehName.getSelectedItemPosition()).getId()));
 
         //List<VehicleRecords> vehiclesRecords = VehicleRecords.find(VehicleRecords.class, "V_Id = ?", String.valueOf(vehiclesNameList.get(spnVehName.getSelectedItemPosition()).getId()),"Id DESC",null,null);
 
-        List<VehicleRecords> vehiclesRecords = Select.from(VehicleRecords.class)
+        Vehicle vehicle = realm.where(Vehicle.class).equalTo("id", vid).findFirst();
+
+        RealmList<VehicleRecords> vehiclesRecords = vehicle.getVehicleRecords();
+        vehiclesRecords.sort("date", Sort.DESCENDING);
+
+
+
+
+       /* List<VehicleRecords> vehiclesRecords = Select.from(VehicleRecords.class)
                 .orderBy("id Desc")
-                .where("V_Id = ?", new String[]{vid}).list();
+                .where("V_Id = ?", new String[]{vid}).list();*/
 
         if (vehiclesRecords.size() > 0) {
             llNoRecord.setVisibility(View.GONE);
@@ -126,7 +138,7 @@ public class RecordsFragment extends Fragment implements FilterData {
     @Override
     public void updateData(String vid) {
         Log.v("Records Fragment", " " + vid);
-        notifyDataRecords(vid);
+        notifyDataRecords(Long.parseLong(vid));
 
         if (filterDataRecordFragment != null) {
             filterDataRecordFragment.updateData(vid);

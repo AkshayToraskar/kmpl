@@ -12,7 +12,8 @@ import android.view.ViewGroup;
 
 import com.ak.kmpl.R;
 import com.ak.kmpl.inteface.FilterData;
-import com.ak.kmpl.model.VehicleRecords;
+import com.ak.kmpl.realm_model.Vehicle;
+import com.ak.kmpl.realm_model.VehicleRecords;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -22,6 +23,8 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.realm.Realm;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,7 +42,7 @@ public class GraphFragment extends Fragment implements FilterData {
     public static boolean FIRSTRUN = false;
 
     protected BarChart mChart;
-
+Realm realm;
     ArrayList<BarEntry> yVals1;
 
 
@@ -54,7 +57,7 @@ public class GraphFragment extends Fragment implements FilterData {
         // Inflate the layout for this fragment
 
         view = inflater.inflate(R.layout.fragment_graph, container, false);
-
+realm=Realm.getDefaultInstance();
         mChart = (BarChart) view.findViewById(R.id.chart1);
 
 
@@ -182,7 +185,7 @@ public class GraphFragment extends Fragment implements FilterData {
 
         yVals1.clear();
 
-        vehiclesRecordList = VehicleRecords.find(VehicleRecords.class, "V_Id = ?", vid);
+       // vehiclesRecordList = realm.where(Vehicle.class).equalTo("id",vid).findAll(); //VehicleRecords.find(VehicleRecords.class, "V_Id = ?", vid);
 
         //mLabels = new String[vehiclesRecordList.size()];
         //mValues = new float[vehiclesRecordList.size()];

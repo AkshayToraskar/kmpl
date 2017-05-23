@@ -32,15 +32,17 @@ import com.ak.kmpl.app.PrefManager;
 import com.ak.kmpl.fragment.GraphFragment;
 import com.ak.kmpl.fragment.RecordsFragment;
 import com.ak.kmpl.inteface.FilterData;
-import com.ak.kmpl.model.Vehicle;
-import com.ak.kmpl.model.VehicleRecords;
+
+import com.ak.kmpl.realm_model.Vehicle;
+import com.ak.kmpl.realm_model.VehicleRecords;
 import com.github.fabtransitionactivity.SheetLayout;
 import com.mikhaellopez.circularimageview.CircularImageView;
-import com.orm.query.Select;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
 import me.anwarshahriar.calligrapher.Calligrapher;
 
 public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout.OnFabAnimationEndListener {
@@ -56,7 +58,7 @@ public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout
     Animation animFadein, animBounce;
     SheetLayout mSheetLayout;
     SheetLayout akSheetLayout;
-    public static String vid;
+    public static long vid;
     public FilterData filterData;
 
     public static FloatingActionButton fabAddNewRecord;
@@ -76,6 +78,7 @@ public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout
     public static int SELECTEDSPN;
 
     public static int SELECTEDBTN;
+    Realm realm;
 
     static EditText etDate, etLitre, etAmount, etMeterReading;
     static int service_reminder;//= 5000;//prefManager.getServiceIntervalKMS();
@@ -85,7 +88,7 @@ public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_records_scroll);
-
+        realm = Realm.getDefaultInstance();
         Calligrapher calligrapher = new Calligrapher(this);
         calligrapher.setFont(this, "CircularAir-Light.otf", true);
 
@@ -144,7 +147,7 @@ public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout
         //filterData=(FilterData)this;
 
 
-        vehiclesNameList = Vehicle.listAll(Vehicle.class);
+        vehiclesNameList = realm.where(Vehicle.class).findAll();
         final String vehicleName[] = new String[vehiclesNameList.size()];
         for (int i = 0; i < vehicleName.length; i++) {
             vehicleName[i] = vehiclesNameList.get(i).getName();
@@ -187,7 +190,7 @@ public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //if (FIRSTRUN == false) {
                 // notifyDataRecords();
-                vid = String.valueOf(vehiclesNameList.get(spnVehName.getSelectedItemPosition()).getId());
+                vid = vehiclesNameList.get(spnVehName.getSelectedItemPosition()).getId();
 
                 /*final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
@@ -200,12 +203,12 @@ public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout
                 setData();
 
                 if (filterData != null) {
-                    filterData.updateData(vid);
+                    filterData.updateData(String.valueOf(vid));
                 }
                 civVehIcon.startAnimation(animBounce);
                 rollingAnim();
 
-                if (vehiclesNameList.get(spnVehName.getSelectedItemPosition()).getType().equalsIgnoreCase("Car")) {
+               /* if (vehiclesNameList.get(spnVehName.getSelectedItemPosition()).getType().equalsIgnoreCase("Car")) {
 
 
                     civVehIcon.setImageResource(R.drawable.car_icon);
@@ -216,7 +219,7 @@ public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout
                     civVehIcon.setImageResource(R.drawable.bike_icon);
 
 
-                }
+                }*/
 
                 //RecordsFragment.filterData.updateData(vid);
 
@@ -267,18 +270,22 @@ public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout
     public void setData() {
 
 
-        List<VehicleRecords> vehiclesRecords = Select.from(VehicleRecords.class)
+        Vehicle vehicle = realm.where(Vehicle.class).equalTo("id", vid).findFirst();
+
+
+        List<VehicleRecords> vehiclesRecords = vehicle.getVehicleRecords();
+        /*Select.from(VehicleRecords.class)
                 .orderBy("id Desc")
-                .where("V_Id = ?", new String[]{vid}).list();
+                .where("V_Id = ?", new String[]{vid}).list();*/
 
         int sum = 0;
         float avgSum = 0, totalAverage;
 
 
-        for (int i = 0; i < vehiclesRecords.size(); i++) {
+       /* for (int i = 0; i < vehiclesRecords.size(); i++) {
             sum = sum + vehiclesRecords.get(i).getAmt();
             avgSum = avgSum + vehiclesRecords.get(i).getAverage();
-        }
+        }*/
 
         totalAverage = avgSum / vehiclesRecords.size();
 
@@ -414,7 +421,7 @@ public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout
     @Override
     protected void onResume() {
 
-        vehiclesNameList = Vehicle.listAll(Vehicle.class);
+        vehiclesNameList = realm.where(Vehicle.class).findAll(); //Vehicle.listAll(Vehicle.class);
 
         // notifyDataRecords();
 
@@ -431,11 +438,11 @@ public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout
             spnVehName.setAdapter(spnVehicleNameAdapter);*/
 
 
-            vid = String.valueOf(vehiclesNameList.get(spnVehName.getSelectedItemPosition()).getId());
+            vid = vehiclesNameList.get(spnVehName.getSelectedItemPosition()).getId();
 
             //RecordsFragment.filterData.updateData(vid);
             if (filterData != null) {
-                filterData.updateData(vid);
+                filterData.updateData(String.valueOf(vid));
             }
 
             civVehIcon.startAnimation(animBounce);
@@ -445,7 +452,7 @@ public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout
                 Log.d("last reading", "last reading" + vehiclesNameList.get(0).getLastReading());
                 Log.d("service reminder pref", "service reminder pref" + prefManager.getServiceInterval());
 
-                vehiclesNameList = Vehicle.listAll(Vehicle.class);
+                vehiclesNameList = realm.where(Vehicle.class).findAll(); //Vehicle.listAll(Vehicle.class);
                 vehicle = vehiclesNameList.get(spnVehName.getSelectedItemPosition());
 
                 //vehicle.setServiceReminder(prefManager.getServiceInterval());
@@ -458,7 +465,7 @@ public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout
 
                     if (Integer.parseInt(String.valueOf(vehiclesNameList.get(0).getLastReading())) > vehicle.getServiceReminder()) {
                         //   service_reminder=prefManager.getServiceInterval();
-                        service_reminder = vehicle.getServiceReminder() + vehicle.getSpinnerItem();
+                        service_reminder = vehicle.getServiceReminder() + vehicle.getSpinnerPos();
                         //serviceInterval = prefManager.getServiceInterval();
 
                         // service_reminder = service_reminder + serviceInterval;
@@ -466,7 +473,7 @@ public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout
                         // prefManager.setServiceInterval(service_reminder);
 
                         vehicle.setServiceReminder(service_reminder);
-                        vehicle.save();
+                        // vehicle.save();
                         Log.d("SR new data", "SR new data" + vehicle.getServiceReminder());
                         showDialogService();
 //                    }

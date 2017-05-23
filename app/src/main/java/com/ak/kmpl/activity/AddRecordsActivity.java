@@ -26,21 +26,38 @@ import android.widget.Spinner;
 import com.ak.kmpl.R;
 import com.ak.kmpl.app.PrefManager;
 import com.ak.kmpl.app.TextValidation;
-import com.ak.kmpl.model.Vehicle;
-import com.ak.kmpl.model.VehicleRecords;
-import com.orm.query.Select;
+import com.ak.kmpl.realm_model.Vehicle;
+import com.ak.kmpl.realm_model.VehicleRecords;
 
+
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 //import cn.refactor.lib.colordialog.ColorDialog;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmList;
 import me.anwarshahriar.calligrapher.Calligrapher;
 
 public class AddRecordsActivity extends AppCompatActivity {
 
-    static EditText etDate, etLitre, etAmount, etMeterReading;
+    @BindView(R.id.etDate)
+    EditText etDate;
+    @BindView(R.id.etLitre)
+    EditText etLitre;
+    @BindView(R.id.etAmount)
+    EditText etAmount;
+    @BindView(R.id.etMeterReading)
+    EditText etMeterReading;
+    @BindView(R.id.spnVehicleName)
     Spinner spnVehName;
-    Button btnDone, btnDelete;
+    @BindView(R.id.btnDone)
+    Button btnDone;
+    @BindView(R.id.btnDelete)
+    Button btnDelete;
     VehicleRecords vehicleRecords;
     List<Vehicle> vehiclesNameList;
     Vehicle vehicle;
@@ -51,30 +68,25 @@ public class AddRecordsActivity extends AppCompatActivity {
     static int service_reminder = 5000;
     // static int service_reminder;
     public static int serviceInterval = 5000;
-
+    Date date;
 
     TextInputLayout tilLitre, tilAmount, tilMeterReading;
-
+    Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_records);
-
+        ButterKnife.bind(this);
+        realm = Realm.getDefaultInstance();
         Calligrapher calligrapher = new Calligrapher(this);
         calligrapher.setFont(this, "CircularAir-Light.otf", true);
 
 
         enterFromBottomAnimation();
 
+        vehiclesNameList = new ArrayList<>();
 
-        etDate = (EditText) findViewById(R.id.etDate);
-        etLitre = (EditText) findViewById(R.id.etLitre);
-        etAmount = (EditText) findViewById(R.id.etAmount);
-        etMeterReading = (EditText) findViewById(R.id.etMeterReading);
-        spnVehName = (Spinner) findViewById(R.id.spnVehicleName);
-        btnDone = (Button) findViewById(R.id.btnDone);
-        btnDelete = (Button) findViewById(R.id.btnDelete);
 
         tilLitre = (TextInputLayout) findViewById(R.id.input_layout_litre);
         tilAmount = (TextInputLayout) findViewById(R.id.input_layout_amount);
@@ -86,7 +98,9 @@ public class AddRecordsActivity extends AppCompatActivity {
 
         tv = new TextValidation(this);
 
-        vehiclesNameList = Vehicle.listAll(Vehicle.class);
+        vehiclesNameList.addAll(realm.where(Vehicle.class).findAll());
+
+        //vehiclesNameList = Vehicle.listAll(Vehicle.class);
         vehicleName = new String[vehiclesNameList.size()];
         for (int i = 0; i < vehicleName.length; i++) {
             vehicleName[i] = vehiclesNameList.get(i).getName();
@@ -103,12 +117,14 @@ public class AddRecordsActivity extends AppCompatActivity {
         if (vehicleRecordId != null) {
             Log.v("aaaa", "adfs " + vehicleRecordId);
 
-            List<VehicleRecords> vehiclesRecords = VehicleRecords.find(VehicleRecords.class, "id = ?", vehicleRecordId);
+            VehicleRecords vehicleRecords = realm.where(VehicleRecords.class).equalTo("id", Long.parseLong(vehicleRecordId)).findFirst();
 
-            etDate.setText(vehiclesRecords.get(0).getDate());
-            etLitre.setText(String.valueOf(vehiclesRecords.get(0).getLitre()));
-            etAmount.setText(String.valueOf(vehiclesRecords.get(0).getAmt()));
-            etMeterReading.setText(String.valueOf(vehiclesRecords.get(0).getReading()));
+            //List<VehicleRecords> vehiclesRecords = VehicleRecords.find(VehicleRecords.class, "id = ?", vehicleRecordId);
+
+            etDate.setText(String.valueOf(vehicleRecords.getDate()));
+            etLitre.setText(String.valueOf(vehicleRecords.getLitre()));
+            etAmount.setText(String.valueOf(vehicleRecords.getAmt()));
+            etMeterReading.setText(String.valueOf(vehicleRecords.getReading()));
 
             btnDone.setText("Update");
             btnDelete.setVisibility(View.VISIBLE);
@@ -120,7 +136,7 @@ public class AddRecordsActivity extends AppCompatActivity {
                 }
             }
             Log.v("Indexed Data", " asdsdaf " + spnPOS);*/
-            spnVehName.setSelection(spnVehicleNameAdapter.getPosition(vehiclesRecords.get(0).getvName()));
+            //spnVehName.setSelection(spnVehicleNameAdapter.getPosition(vehicleRecords.get));
 
 
         }
@@ -144,6 +160,9 @@ public class AddRecordsActivity extends AppCompatActivity {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        date = calendar.getTime();
+
         etDate.setText(String.format("%02d", day) + "-" + String.format("%02d", (month + 1)) + "-" + year);
 
 
@@ -196,8 +215,8 @@ public class AddRecordsActivity extends AppCompatActivity {
                 if (!tv.validateText(etMeterReading, "Enter Meter Reading", false)) {
                     return;
                 }
-//notification for service
-          /*      if (Integer.parseInt(etMeterReading.getText().toString()) >= prefManager.getServiceInterval()) {
+                //notification for service
+                /*      if (Integer.parseInt(etMeterReading.getText().toString()) >= prefManager.getServiceInterval()) {
                     //   service_reminder=prefManager.getServiceInterval();
                     service_reminder = serviceInterval + prefManager.getServiceInterval();
                     prefManager.setServiceInterval(service_reminder);
@@ -205,7 +224,7 @@ public class AddRecordsActivity extends AppCompatActivity {
                     showServiceNotification();
                 }
 
-*/
+                */
 
                 /*if (!tv.validateTILText(etLitre, tilLitre, "Enter Litre", false)) {
                     return;
@@ -225,8 +244,8 @@ public class AddRecordsActivity extends AppCompatActivity {
                     tilMeterReading.setErrorEnabled(false);
                 }*/
 
-                if (Integer.parseInt(etMeterReading.getText().toString()) <= Integer.parseInt(String.valueOf(vehicle.getLastReading()))) {
-                    etMeterReading.setError("Your Last Reading is: " + vehicle.getLastReading());
+                if (Float.parseFloat(etMeterReading.getText().toString()) <=  vehicle.getLastReading()) {
+                    etMeterReading.setError("Your Last Reading is: " + String.valueOf(vehicle.getLastReading()));
                     //requestFocus(et);
 
                     //tilMeterReading.setErrorEnabled(true);
@@ -238,11 +257,9 @@ public class AddRecordsActivity extends AppCompatActivity {
                 }*/
 
 
-                if (vehicleRecordId != null) {
+                //VehicleRecords vehicleRec = VehicleRecords.findById(VehicleRecords.class, Integer.parseInt(vehicleRecordId));
 
-                    VehicleRecords vehicleRec = VehicleRecords.findById(VehicleRecords.class, Integer.parseInt(vehicleRecordId));
 
-                    saveRec(vehicleRec);
                     /*vehicleRec.setvId(vehicle.getId());
                     vehicleRec.setAmt(Integer.parseInt(etAmount.getText().toString()));
                     vehicleRec.setAverage(26);
@@ -256,19 +273,13 @@ public class AddRecordsActivity extends AppCompatActivity {
                     vehicle.setLastReading(Integer.parseInt(etMeterReading.getText().toString()));
                     vehicle.save();*/
 
-                    //finish();
-
-                    startShowRecord();
+                //finish();
 
 
-                } else {
-                    vehicleRecords = new VehicleRecords();
-                    saveRec(vehicleRecords);
+                //finish();
+                saveRec();
+                startShowRecord();
 
-
-                    //finish();
-                    startShowRecord();
-                }
 
                 break;
 
@@ -279,18 +290,18 @@ public class AddRecordsActivity extends AppCompatActivity {
                         .setMessage("Are you sure you want to delete this entry?")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                VehicleRecords vehicleRec = VehicleRecords.findById(VehicleRecords.class, Integer.parseInt(vehicleRecordId));
-                                vehicleRec.delete();
+                                // VehicleRecords vehicleRec = VehicleRecords.findById(VehicleRecords.class, Integer.parseInt(vehicleRecordId));
+                                // vehicleRec.delete();
 
                                 Log.v("Last Reading", "l: " + lastReading());
 
                                 if (lastReading() >= 0) {
 
-                                    vehicle.setLastReading(lastReading());
-                                    vehicle.save();
+                                    //   vehicle.setLastReading(lastReading());
+                                    //   vehicle.save();
                                 } else {
-                                    vehicle.setLastReading(0);
-                                    vehicle.save();
+                                    //   vehicle.setLastReading(0);
+                                    //  vehicle.save();
                                 }
                                 startShowRecord();
                             }
@@ -303,7 +314,7 @@ public class AddRecordsActivity extends AppCompatActivity {
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .show();
 
-               // showDialogService();
+                // showDialogService();
                /* new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
                         .setTitleText("Are you sure?")
                         .setContentText("Won't be able to recover this file!")
@@ -488,16 +499,17 @@ public class AddRecordsActivity extends AppCompatActivity {
     public int lastReading() {
         String vid = String.valueOf(vehiclesNameList.get(spnVehName.getSelectedItemPosition()).getId());
 
-        List<VehicleRecords> vehiclesRecords = Select.from(VehicleRecords.class)
-                .orderBy("id Desc")
-                .where("V_Id = ?", new String[]{vid}).list();
+        // List<VehicleRecords> vehiclesRecords = Select.from(VehicleRecords.class)
+        //        .orderBy("id Desc")
+        //        .where("V_Id = ?", new String[]{vid}).list();
 
-        if (vehiclesRecords.size() == 0) {
-            return 0;
-        }
+        // if (vehiclesRecords.size() == 0) {
+        //     return 0;
+        // }
 
 
-        return vehiclesRecords.get(0).getReading();
+        // return vehiclesRecords.get(0).getReading();
+        return 0;
     }
 
 
@@ -515,9 +527,9 @@ public class AddRecordsActivity extends AppCompatActivity {
     }
 
 
-    public void saveRec(VehicleRecords vehRec) {
-        vehRec.setvId(vehicle.getId());
-        vehRec.setAmt(Integer.parseInt(etAmount.getText().toString()));
+    public void saveRec() {
+        // vehRec.setvId(vehicle.getId());
+        /*vehRec.setAmt(Integer.parseInt(etAmount.getText().toString()));
 
         vehRec.setDate(etDate.getText().toString());
 
@@ -538,15 +550,62 @@ public class AddRecordsActivity extends AppCompatActivity {
         vehicle.setLastLitre(Float.parseFloat(etLitre.getText().toString()));
         //chang3
         //vehicle.setServiceReminder(5000);
-        vehicle.save();
+        vehicle.save();*/
+
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+
+                VehicleRecords vehRec;
+
+                if (vehicleRecordId != null) {
+
+                    vehRec = realm.where(VehicleRecords.class).equalTo("id", vehicleRecordId).findFirst();
+                } else {
+                    vehRec = realm.createObject(VehicleRecords.class, new Date().getTime());
+                }
+
+                vehRec.setAmt(Integer.parseInt(etAmount.getText().toString()));
+
+                vehRec.setDate(date);
+
+                if (vehicle.getLastLitre() == 0) {
+                    vehRec.setAverage(0);
+                    vehRec.setDistCover(0);
+                } else {
+                    String avg = String.format("%.2f", getDistanceCovered() / vehicle.getLastLitre());
+                    vehRec.setAverage(Float.parseFloat(avg));
+                    vehRec.setDistCover(getDistanceCovered());
+                }
+                vehRec.setLitre(Float.parseFloat(etLitre.getText().toString()));
+
+                vehRec.setReading(Integer.parseInt(etMeterReading.getText().toString()));
+
+
+                vehicle.setLastReading(Integer.parseInt(etMeterReading.getText().toString()));
+                vehicle.setLastLitre(Float.parseFloat(etLitre.getText().toString()));
+
+                RealmList<VehicleRecords> rec=new RealmList<VehicleRecords>();
+                rec.addAll(vehicle.getVehicleRecords());
+                rec.add(vehRec);
+
+
+                vehicle.setVehicleRecords(rec);
+
+                realm.copyToRealmOrUpdate(vehicle);
+
+            }
+        });
+
     }
 
     public int getDistanceCovered() {
-        return Integer.parseInt(etMeterReading.getText().toString()) - vehicle.getLastReading();
+        //  return Integer.parseInt(etMeterReading.getText().toString()) - vehicle.getLastReading();
+        return 0;
     }
 
     //show selected date
-    private void showDatePickerDialog(String date) {
+    private void showDatePickerDialog(final String date) {
         // here date is 5-12-2013
         String[] split = date.split("-");
         int day = Integer.valueOf(split[0]);
@@ -560,6 +619,9 @@ public class AddRecordsActivity extends AppCompatActivity {
                                   int dayOfMonth) {
                 // TODO Auto-generated method stub
                 etDate.setText(String.format("%02d", dayOfMonth) + "-" + String.format("%02d", (monthOfYear + 1)) + "-" + year);
+
+                //this.date
+
             }
         };
 
