@@ -88,12 +88,12 @@ public class RecordsFragment extends Fragment implements FilterData {
         rvVehicleRecord.setOnScrollListener(new MyRecyclerScroll() {
             @Override
             public void show() {
-                ShowRecorsActivity.fabAddNewRecord.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+              //  ShowRecorsActivity.fabAddNewRecord.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
             }
 
             @Override
             public void hide() {
-                ShowRecorsActivity.fabAddNewRecord.animate().translationY(ShowRecorsActivity.fabAddNewRecord.getHeight() + 50).setInterpolator(new AccelerateInterpolator(2)).start();
+             //   ShowRecorsActivity.fabAddNewRecord.animate().translationY(ShowRecorsActivity.fabAddNewRecord.getHeight() + 50).setInterpolator(new AccelerateInterpolator(2)).start();
             }
         });
 
@@ -109,8 +109,8 @@ public class RecordsFragment extends Fragment implements FilterData {
 
         Vehicle vehicle = realm.where(Vehicle.class).equalTo("id", vid).findFirst();
 
-        RealmList<VehicleRecords> vehiclesRecords = vehicle.getVehicleRecords();
-        vehiclesRecords.sort("date", Sort.DESCENDING);
+        List<VehicleRecords> vehiclesRecords = vehicle.getVehicleRecords().sort("recordNo",Sort.DESCENDING);
+        //vehiclesRecords.sort("date", Sort.DESCENDING);
 
 
 
@@ -126,12 +126,12 @@ public class RecordsFragment extends Fragment implements FilterData {
         }
 
 
-        RecordsFragment.vehicleRecordses.clear();
-        RecordsFragment.vehicleRecordses.addAll(vehiclesRecords);
+        vehicleRecordses.clear();
+        vehicleRecordses.addAll(vehiclesRecords);
 
         vId = vid;
 
-        RecordsFragment.mAdapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
     }
 
 

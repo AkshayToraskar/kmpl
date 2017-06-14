@@ -93,7 +93,7 @@ public class AddRecordsActivity extends AppCompatActivity {
         tilMeterReading = (TextInputLayout) findViewById(R.id.input_layout_meter_reading);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("New Transaction");
+        getSupportActionBar().setTitle("Add Refuelings");
 
 
         tv = new TextValidation(this);
@@ -244,7 +244,7 @@ public class AddRecordsActivity extends AppCompatActivity {
                     tilMeterReading.setErrorEnabled(false);
                 }*/
 
-                if (Float.parseFloat(etMeterReading.getText().toString()) <=  vehicle.getLastReading()) {
+                if (Float.parseFloat(etMeterReading.getText().toString()) <= vehicle.getLastReading()) {
                     etMeterReading.setError("Your Last Reading is: " + String.valueOf(vehicle.getLastReading()));
                     //requestFocus(et);
 
@@ -290,17 +290,27 @@ public class AddRecordsActivity extends AppCompatActivity {
                         .setMessage("Are you sure you want to delete this entry?")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                // VehicleRecords vehicleRec = VehicleRecords.findById(VehicleRecords.class, Integer.parseInt(vehicleRecordId));
+                                final VehicleRecords vehicleRec = realm.where(VehicleRecords.class).equalTo("id", Integer.parseInt(vehicleRecordId)).findFirst();
+
                                 // vehicleRec.delete();
+
+                                realm.executeTransaction(new Realm.Transaction() {
+                                    @Override
+                                    public void execute(Realm realm) {
+
+                                        vehicleRec.deleteFromRealm();
+
+                                    }
+                                });
+
 
                                 Log.v("Last Reading", "l: " + lastReading());
 
                                 if (lastReading() >= 0) {
-
-                                    //   vehicle.setLastReading(lastReading());
+                                    vehicle.setLastReading(lastReading());
                                     //   vehicle.save();
                                 } else {
-                                    //   vehicle.setLastReading(0);
+                                    vehicle.setLastReading(0);
                                     //  vehicle.save();
                                 }
                                 startShowRecord();
@@ -578,14 +588,16 @@ public class AddRecordsActivity extends AppCompatActivity {
                     vehRec.setDistCover(getDistanceCovered());
                 }
                 vehRec.setLitre(Float.parseFloat(etLitre.getText().toString()));
-
                 vehRec.setReading(Integer.parseInt(etMeterReading.getText().toString()));
 
+                Number currentIdNo=vehicle.getVehicleRecords().max("recordNo");
+                int nextId = (currentIdNo == null) ? 1 : currentIdNo.intValue() + 1;
+                vehRec.setRecordNo(nextId);
 
                 vehicle.setLastReading(Integer.parseInt(etMeterReading.getText().toString()));
                 vehicle.setLastLitre(Float.parseFloat(etLitre.getText().toString()));
 
-                RealmList<VehicleRecords> rec=new RealmList<VehicleRecords>();
+                RealmList<VehicleRecords> rec = new RealmList<VehicleRecords>();
                 rec.addAll(vehicle.getVehicleRecords());
                 rec.add(vehRec);
 
@@ -600,8 +612,7 @@ public class AddRecordsActivity extends AppCompatActivity {
     }
 
     public int getDistanceCovered() {
-        //  return Integer.parseInt(etMeterReading.getText().toString()) - vehicle.getLastReading();
-        return 0;
+        return Integer.parseInt(etMeterReading.getText().toString()) - (int) vehicle.getLastReading();        //return 0;
     }
 
     //show selected date

@@ -17,6 +17,16 @@ public class VehicleRecords extends RealmObject {
     Date date;
     float amt, reading, distCover, average, litre;
 
+    int recordNo;
+
+    public int getRecordNo() {
+        return recordNo;
+    }
+
+    public void setRecordNo(int recordNo) {
+        this.recordNo = recordNo;
+    }
+
     public long getId() {
         return id;
     }

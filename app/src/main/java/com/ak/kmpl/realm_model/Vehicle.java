@@ -13,7 +13,7 @@ public class Vehicle extends RealmObject {
     @PrimaryKey
     long id;
     String name;
-    int type, serviceReminder, spinnerPos;;
+    int type, serviceReminder, spinnerPos;
     float lastReading, lastLitre;
     RealmList<VehicleRecords> vehicleRecords;
 

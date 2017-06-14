@@ -749,7 +749,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 
 
-        loadNearByPlaces(latitude, longitude);
+//        loadNearByPlaces(latitude, longitude);
 
 
     }

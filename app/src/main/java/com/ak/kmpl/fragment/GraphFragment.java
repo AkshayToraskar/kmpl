@@ -18,6 +18,7 @@ import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.realm.implementation.RealmBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,7 +44,7 @@ public class GraphFragment extends Fragment implements FilterData {
     public static boolean FIRSTRUN = false;
 
     protected BarChart mChart;
-Realm realm;
+    Realm realm;
     ArrayList<BarEntry> yVals1;
 
 
@@ -57,21 +59,21 @@ Realm realm;
         // Inflate the layout for this fragment
 
         view = inflater.inflate(R.layout.fragment_graph, container, false);
-realm=Realm.getDefaultInstance();
+        realm = Realm.getDefaultInstance();
         mChart = (BarChart) view.findViewById(R.id.chart1);
 
 
         mChart.setDrawBarShadow(false);
         mChart.setDrawValueAboveBar(true);
-        mChart.setDescription("");
+        //mChart.setDescription();
         // if more than 60 entries are displayed in the chart, no values will be
         // drawn
         mChart.setMaxVisibleValueCount(60);
         // scaling can now only be done on x- and y-axis separately
         mChart.setPinchZoom(false);
 
-        mChart.setDrawGridBackground(true);
-
+        mChart.setDrawGridBackground(false);
+        mChart.setFitBars(false);
 
         yVals1 = new ArrayList<BarEntry>();
 
@@ -174,38 +176,51 @@ realm=Realm.getDefaultInstance();
         //.setEndAction(chartOneAction));
     }*/
 
-    public void getDataFromDB(String vid) {
+    public void getDataFromDB(final String vid) {
+
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
 
 
-        if (vehiclesRecordList.size() > 0) {
-            vehiclesRecordList.clear();
-            // barChartView.dismiss(new Animation()
-            //        .setOverlap(.7f, order));
-        }
+                if (vehiclesRecordList.size() > 0) {
+                    //    vehiclesRecordList.clear();
+                    // barChartView.dismiss(new Animation()
+                    //        .setOverlap(.7f, order));
 
-        yVals1.clear();
+                }
 
-       // vehiclesRecordList = realm.where(Vehicle.class).equalTo("id",vid).findAll(); //VehicleRecords.find(VehicleRecords.class, "V_Id = ?", vid);
+                yVals1.clear();
 
-        //mLabels = new String[vehiclesRecordList.size()];
-        //mValues = new float[vehiclesRecordList.size()];
-        //order = new int[vehiclesRecordList.size()];
+                Vehicle vehicle = realm.where(Vehicle.class).equalTo("id", Long.parseLong(vid)).findFirst();
 
-
-        for (int i = 0; i < vehiclesRecordList.size() - 1; i++) {
-            //mLabels[i] = String.valueOf(vehiclesRecordList.get(i).getAverage());
-            //mValues[i] = vehiclesRecordList.get(i).getAverage();
-            //order[i] = i;
-
-            yVals1.add(new BarEntry(i + 1f, vehiclesRecordList.get(i + 1).getAverage()));
-
-        }
-
-        setData(vehiclesRecordList.size() - 1, 20);
+                vehiclesRecordList = vehicle.getVehicleRecords();
 
 
-        // showChart();
+               // RealmBarDataSet<VehicleRecords> dataSet = new RealmBarDataSet<VehicleRecords>(vehiclesRecordList, "xValue", "yValue");
 
+                mLabels = new String[vehiclesRecordList.size()];
+                mValues = new float[vehiclesRecordList.size()];
+                order = new int[vehiclesRecordList.size()];
+
+
+                for (int i = 0; i < vehiclesRecordList.size() - 1; i++) {
+                    mLabels[i] = String.valueOf(vehiclesRecordList.get(i).getAverage());
+                    mValues[i] = vehiclesRecordList.get(i).getAverage();
+                    //order[i] = i;
+
+                    yVals1.add(new BarEntry(i + 1f, vehiclesRecordList.get(i + 1).getAverage()));
+
+                }
+
+                setData(vehiclesRecordList.size() - 1, 20);
+
+
+                // showChart();
+
+
+            }
+        });
     }
 
     @Override

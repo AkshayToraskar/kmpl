@@ -42,110 +42,115 @@ import com.mikhaellopez.circularimageview.CircularImageView;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.BindViews;
+import butterknife.ButterKnife;
 import io.realm.Realm;
 import me.anwarshahriar.calligrapher.Calligrapher;
 
 public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout.OnFabAnimationEndListener {
 
-    Vehicle vehicle;
+    @BindView(R.id.fabAddNewRecord)
+    FloatingActionButton fabAddNewRecord;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.tabs)
+    TabLayout tabLayout;
+    @BindView(R.id.viewpager)
+    ViewPager viewPager;
+    @BindView(R.id.ivHome)
+    ImageView ivHome;
+    @BindViews({R.id.tvMr1, R.id.tvMr2, R.id.tvMr3, R.id.tvMr4, R.id.tvMr5, R.id.tvMr6})
+    List<TextView> lstTvMeter;
+    @BindView(R.id.spnVehicleName)
     Spinner spnVehName;
-    public static List<Vehicle> vehiclesNameList;
-    private CircularImageView civVehIcon;
-    //public static boolean FIRSTRUN = false;
-    //ExplosionField explosionField;
-
-    // Animation
-    Animation animFadein, animBounce;
+    @BindView(R.id.tvKms)
+    TextView tvKms;
+    @BindView(R.id.tvAmount)
+    TextView tvAmount;
+    @BindView(R.id.tvAverage)
+    TextView tvAverage;
+    @BindView(R.id.llAverage)
+    LinearLayout llAverage;
+    @BindView(R.id.llAmt)
+    LinearLayout llAmt;
+    @BindView(R.id.bottom_sheet)
     SheetLayout mSheetLayout;
+    @BindView(R.id.menu_sheet)
     SheetLayout akSheetLayout;
-    public static long vid;
-    public FilterData filterData;
+    @BindView(R.id.civVehIcon)
+    CircularImageView civVehIcon;
 
-    public static FloatingActionButton fabAddNewRecord;
-    private Toolbar toolbar;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
-    private ImageView ivHome;
-
-    TextView tvMr1, tvMr2, tvMr3, tvMr4, tvMr5, tvMr6, tvKms, tvAmount, tvAverage;
-    LinearLayout llAverage, llAmt;
-    ArrayAdapter<String> spnVehicleNameAdapter;
     private static final int REQUEST_CODE = 1;
     private static final int AK_REQUEST_CODE = 2;
-
-
-    public static PrefManager prefManager;
     public static int SELECTEDSPN;
-
     public static int SELECTEDBTN;
-    Realm realm;
+    public static long vid;
 
-    static EditText etDate, etLitre, etAmount, etMeterReading;
-    static int service_reminder;//= 5000;//prefManager.getServiceIntervalKMS();
-    static int serviceInterval;// = 5000;//prefManager.getServiceIntervalKMS();
+    public PrefManager prefManager;
+    public List<Vehicle> vehiclesNameList;
+    public int service_reminder;
+
+    Realm realm;
+    Vehicle vehicle;
+    ArrayAdapter<String> spnVehicleNameAdapter;
+    Animation animFadein, animBounce;
+    public FilterData filterData;
+
+    //public static boolean FIRSTRUN = false;
+    //ExplosionField explosionField;
+    // Animation
+    //static EditText etDate, etLitre, etAmount, etMeterReading;
+    //= 5000;//prefManager.getServiceIntervalKMS();
+    //static int serviceInterval;// = 5000;//prefManager.getServiceIntervalKMS();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_records_scroll);
+        ButterKnife.bind(this);
+
         realm = Realm.getDefaultInstance();
         Calligrapher calligrapher = new Calligrapher(this);
         calligrapher.setFont(this, "CircularAir-Light.otf", true);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
-        mSheetLayout = (SheetLayout) findViewById(R.id.bottom_sheet);
-
-        akSheetLayout = (SheetLayout) findViewById(R.id.menu_sheet);
-
-        fabAddNewRecord = (FloatingActionButton) findViewById(R.id.fabAddNewRecord);
-
-
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
-
-        ivHome = (ImageView) findViewById(R.id.ivHome);
-
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
-
-        civVehIcon = (CircularImageView) findViewById(R.id.civVehIcon);
-        spnVehName = (Spinner) findViewById(R.id.spnVehicleName);
-
-        tvMr1 = (TextView) findViewById(R.id.tvMr1);
-        tvMr2 = (TextView) findViewById(R.id.tvMr2);
-        tvMr3 = (TextView) findViewById(R.id.tvMr3);
-        tvMr4 = (TextView) findViewById(R.id.tvMr4);
-        tvMr5 = (TextView) findViewById(R.id.tvMr5);
-        tvMr6 = (TextView) findViewById(R.id.tvMr6);
-        tvKms = (TextView) findViewById(R.id.tvKms);
-        tvAverage = (TextView) findViewById(R.id.tvAverage);
-
-        llAverage = (LinearLayout) findViewById(R.id.llAverage);
-        llAmt = (LinearLayout) findViewById(R.id.llAmt);
-
-        tvAmount = (TextView) findViewById(R.id.tvAmount);
-
-        etMeterReading = (EditText) findViewById(R.id.etMeterReading);
-
         prefManager = new PrefManager(getApplicationContext());
 
+        setupViewPager(viewPager);
+        tabLayout.setupWithViewPager(viewPager);
 
-        //prefManager.setServiceInterval(service_reminder);
+        animFadein = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
+        animBounce = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.bounce);
 
+        //  toolbar = (Toolbar) findViewById(R.id.toolbar);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        // mSheetLayout = (SheetLayout) findViewById(R.id.bottom_sheet);
+        //  akSheetLayout = (SheetLayout) findViewById(R.id.menu_sheet);
+        //   fabAddNewRecord = (FloatingActionButton) findViewById(R.id.fabAddNewRecord);
+        //  viewPager = (ViewPager) findViewById(R.id.viewpager);
+        //  ivHome = (ImageView) findViewById(R.id.ivHome);
+        // tabLayout = (TabLayout) findViewById(R.id.tabs);
+        //  civVehIcon = (CircularImageView) findViewById(R.id.civVehIcon);
+        //  spnVehName = (Spinner) findViewById(R.id.spnVehicleName);
+        // tvMr1 = (TextView) findViewById(R.id.tvMr1);
+        // tvMr2 = (TextView) findViewById(R.id.tvMr2);
+        // tvMr3 = (TextView) findViewById(R.id.tvMr3);
+        // tvMr4 = (TextView) findViewById(R.id.tvMr4);
+        // tvMr5 = (TextView) findViewById(R.id.tvMr5);
+        // tvMr6 = (TextView) findViewById(R.id.tvMr6);
+        //  tvKms = (TextView) findViewById(R.id.tvKms);
+        //  tvAverage = (TextView) findViewById(R.id.tvAverage);
+        //  llAverage = (LinearLayout) findViewById(R.id.llAverage);
+        //  llAmt = (LinearLayout) findViewById(R.id.llAmt);
+        //tvAmount = (TextView) findViewById(R.id.tvAmount);
+        //  etMeterReading = (EditText) findViewById(R.id.etMeterReading);
+        //prefManager.setServiceInterval(service_reminder);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //explosionField = ExplosionField.attach2Window(this);
-
-        animFadein = AnimationUtils.loadAnimation(getApplicationContext(),
-                R.anim.fade_in);
-        animBounce = AnimationUtils.loadAnimation(getApplicationContext(),
-                R.anim.bounce);
         //filterData=(FilterData)this;
-
+        //FIRSTRUN = true;
+        //showRecords();
 
         vehiclesNameList = realm.where(Vehicle.class).findAll();
         final String vehicleName[] = new String[vehiclesNameList.size()];
@@ -161,29 +166,20 @@ public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout
         spnVehName.setSelection(prefManager.getDefaultVehicle());
         SELECTEDSPN = prefManager.getDefaultVehicle();
 
-
-        //FIRSTRUN = true;
-
         fabAddNewRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //startActivity(new Intent(ShowRecorsActivity.this, AddRecordsActivity.class));
-
                 SELECTEDSPN = spnVehName.getSelectedItemPosition();
                 SELECTEDBTN = 1;
                 mSheetLayout.expandFab();
             }
         });
 
-
-        //showRecords();
-
         mSheetLayout.setFab(fabAddNewRecord);
         mSheetLayout.setFabAnimationEndListener(this);
-
         akSheetLayout.setFab(ivHome);
         akSheetLayout.setFabAnimationEndListener(this);
-
 
         spnVehName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -208,21 +204,12 @@ public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout
                 civVehIcon.startAnimation(animBounce);
                 rollingAnim();
 
-               /* if (vehiclesNameList.get(spnVehName.getSelectedItemPosition()).getType().equalsIgnoreCase("Car")) {
-
-
-                    civVehIcon.setImageResource(R.drawable.car_icon);
-
-
-                } else {
-
+                if (vehiclesNameList.get(spnVehName.getSelectedItemPosition()).getType()==0) {
                     civVehIcon.setImageResource(R.drawable.bike_icon);
-
-
-                }*/
-
-                //RecordsFragment.filterData.updateData(vid);
-
+                } else {
+                   civVehIcon.setImageResource(R.drawable.car_icon);
+                }
+                RecordsFragment.filterDataRecordFragment.updateData(String.valueOf(vid));
 
                 /*} else {
                     FIRSTRUN = false;
@@ -255,12 +242,14 @@ public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout
         rollingIn.setDuration(FADE_DURATION);
 
         tvKms.startAnimation(rollingIn);
-        tvMr1.startAnimation(rollingIn);
-        tvMr2.startAnimation(rollingIn);
+        for (int i = 0; i < lstTvMeter.size(); i++) {
+            lstTvMeter.get(i).startAnimation(rollingIn);
+        }
+        /*tvMr2.startAnimation(rollingIn);
         tvMr3.startAnimation(rollingIn);
         tvMr4.startAnimation(rollingIn);
         tvMr5.startAnimation(rollingIn);
-        tvMr6.startAnimation(rollingIn);
+        tvMr6.startAnimation(rollingIn);*/
 
         llAmt.startAnimation(rollingIn);
         llAverage.startAnimation(rollingIn);
@@ -296,43 +285,46 @@ public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout
         tvAmount.setText(sum + " ");
 
 
-        String totalReading = String.valueOf(vehiclesNameList.get(spnVehName.getSelectedItemPosition()).getLastReading());
+        String totalReading = String.valueOf((int) vehiclesNameList.get(spnVehName.getSelectedItemPosition()).getLastReading());
         String aa = String.format("%1$" + 5 + "s", totalReading);
         String totalReadings[] = aa.split("");
 
-        tvMr1.setText("0");
+        /*tvMr1.setText("0");
         tvMr2.setText("0");
         tvMr3.setText("0");
         tvMr4.setText("0");
         tvMr5.setText("0");
-        tvMr6.setText("0");
+        tvMr6.setText("0");*/
+        for (int i = 0; i < lstTvMeter.size(); i++) {
+            lstTvMeter.get(i).setText("0");
+        }
 
         for (int i = 0; i < totalReadings.length; i++) {
 
 
             switch (i) {
                 case 0:
-                    tvMr1.setText("" + totalReadings[i]);
+                    lstTvMeter.get(0).setText("" + totalReadings[i]);
                     break;
 
                 case 1:
-                    tvMr2.setText("" + totalReadings[i]);
+                    lstTvMeter.get(1).setText("" + totalReadings[i]);
                     break;
 
                 case 2:
-                    tvMr3.setText("" + totalReadings[i]);
+                    lstTvMeter.get(2).setText("" + totalReadings[i]);
                     break;
 
                 case 3:
-                    tvMr4.setText("" + totalReadings[i]);
+                    lstTvMeter.get(3).setText("" + totalReadings[i]);
                     break;
 
                 case 4:
-                    tvMr5.setText("" + totalReadings[i]);
+                    lstTvMeter.get(4).setText("" + totalReadings[i]);
                     break;
 
                 case 5:
-                    tvMr6.setText("" + totalReadings[i]);
+                    lstTvMeter.get(5).setText("" + totalReadings[i]);
                     break;
 
                 default:
@@ -524,7 +516,7 @@ public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new RecordsFragment(), "Transaction");
+        adapter.addFragment(new RecordsFragment(), "Refuelings");
         adapter.addFragment(new GraphFragment(), "Overview");
         //adapter.addFragment(new SummaryFragment(), "Summary");
         viewPager.setAdapter(adapter);
@@ -547,9 +539,9 @@ public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout
                 // fire event if the "My Site" page is being scrolled so the fragment can
                 // animate its fab to match
                 if (position == 0) {
-                    ShowRecorsActivity.fabAddNewRecord.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+                    fabAddNewRecord.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
                 } else if (position == 1) {
-                    fabAddNewRecord.animate().translationY(ShowRecorsActivity.fabAddNewRecord.getHeight() + 50).setInterpolator(new AccelerateInterpolator(2)).start();
+                    fabAddNewRecord.animate().translationY(fabAddNewRecord.getHeight() + 50).setInterpolator(new AccelerateInterpolator(2)).start();
                 }
 
             }
