@@ -15,8 +15,6 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
-
-
         <fragment
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -24,13 +22,18 @@
             android:layout_height="match_parent"
             android:layout_above="@+id/btnDialog"
             tools:layout="@layout/activity_maps" />
+
         <Button
             android:id="@+id/btnDialog"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:text="Show List" />
+            android:text="Show List"
+            android:background="#fff"
+            android:drawableLeft="@drawable/showlistmenu"
+            android:paddingLeft="25dp"
+            android:textColor="#000" />
     </RelativeLayout>
 
 
@@ -40,6 +43,7 @@
         android:layout_height="wrap_content"
         android:background="#fff"
         android:gravity="center"
+
         android:orientation="vertical"
         app:layout_behavior="@string/bottom_sheet_behavior">
 
@@ -48,9 +52,8 @@
             android:id="@+id/recyclerViewMaps"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="16dp"
-            android:background="#fff" />
+
+            android:background="#000" />
 
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
