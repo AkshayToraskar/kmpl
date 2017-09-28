@@ -1,4 +1,5 @@
 package com.ak.kmpl.activity;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -51,6 +52,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.karumi.dexter.listener.single.PermissionListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,10 +69,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.anwarshahriar.calligrapher.Calligrapher;
-/*import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.OnNeverAskAgain;
-import permissions.dispatcher.OnPermissionDenied;
-import permissions.dispatcher.RuntimePermissions;*/
 
 import static com.ak.kmpl.app.AppConfig.GEOMETRY;
 import static com.ak.kmpl.app.AppConfig.GOOGLE_BROWSER_API_KEY;
@@ -84,18 +89,17 @@ import static com.ak.kmpl.app.AppConfig.TAG;
 import static com.ak.kmpl.app.AppConfig.VICINITY;
 import static com.ak.kmpl.app.AppConfig.ZERO_RESULTS;
 
+/*import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.OnNeverAskAgain;
+import permissions.dispatcher.OnPermissionDenied;
+import permissions.dispatcher.RuntimePermissions;*/
 //import com.arsy.maps_library.MapRipple;
 //import com.arsy.maps_library.MapRipple;
 //import com.arsy.maps_library.MapRipple;
-
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-
-import com.ak.kmpl.R;
 
 //@RuntimePermissions
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
-        LocationListener, ItemAdapter.ItemListener  {
+        LocationListener, ItemAdapter.ItemListener {
 
 
     /*protected void onCreate(Bundle savedInstanceState) {
@@ -148,14 +152,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public ImageView imageView;
 
+    String place;
     private Context mContext;
 
     public static ArrayList<Item> items = new ArrayList<>();
     public static String number;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
 
         if (!isGooglePlayServicesAvailable()) {
@@ -164,17 +169,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        btnDialog = (Button) findViewById(R.id.btnDialog);
 
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-
-      //  MapsActivityPermissionsDispatcher.showgpsWithCheck(this);
+        Dexter.withActivity(this)
+                .withPermissions(
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                ).withListener(new MultiplePermissionsListener() {
+            @Override public void onPermissionsChecked(MultiplePermissionsReport report) {/* ... */}
+            @Override public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {/* ... */}
+        }).check();
+        // MapsActivityPermissionsDispatcher.showgpsWithCheck(this);
 
         mainCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.mainCoordinatorLayout);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             showLocationSettings();
         }
@@ -186,61 +200,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         // locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this); //You can also use LocationManager.GPS_PROVIDER and LocationManager.PASSIVE_PROVIDER
     }
 
-    private void showBottomSheetDialog() {
-        if (behavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
-            behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        }
-
-        mBottomSheetDialog = new BottomSheetDialog(this);
-        View view = getLayoutInflater().inflate(R.layout.sheet, null);
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new ItemAdapter(createItems(), new ItemAdapter.ItemListener() {
-            @Override
-            public void onItemClick(Item item) {
-                if (mBottomSheetDialog != null) {
-                    mBottomSheetDialog.dismiss();
-
-
-                    double lat = item.getLatitude();
-                    double lng = item.getLongitude();
-
-
-                    LatLng latLng = new LatLng(lat, lng);
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
-
-                    mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.gaspump32))
-                            .title(item.getmTitle())).showInfoWindow();
-
-                }
-            }
-        }));
-
-        mBottomSheetDialog.setContentView(view);
-        mBottomSheetDialog.show();
-        mBottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                mBottomSheetDialog = null;
-            }
-        });
-    }
-
-    @Override
+    //to avoid crash
+  /*  @Override
     protected void onDestroy() {
         super.onDestroy();
         mAdapter.setListener(null);
-    }
+    }*/
 
     public List<Item> createItems() {
 
 
         // items.add(new Item(R.mipmap.ic_launcher, "Item 1"));
-        items.add(new Item(R.mipmap.ic_launcher, "Item 2","","",0,0));
-        items.add(new Item(R.mipmap.ic_launcher, "Item 3","","",0,0));
-        items.add(new Item(R.mipmap.ic_launcher, "Item 4","","",0,0));
+//        items.add(new Item(R.mipmap.ic_launcher, "Item 2"));
+//        items.add(new Item(R.mipmap.ic_launcher, "Item 3"));
+//        items.add(new Item(R.mipmap.ic_launcher, "Item 4"));
+
 
         return items;
     }
@@ -345,6 +319,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         calligrapher.setFont(this, "CircularAir-Light.otf", false);
         mMap = googleMap;
 
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -366,7 +341,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         showCurrentLocation();
 
         //changes made for list view
-        btnDialog = (Button) findViewById(R.id.btnDialog);
+
+
 
         btnDialog.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -389,12 +365,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewMaps);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        mAdapter = new ItemAdapter(createItems(), this);
-        recyclerView.setAdapter(mAdapter);
 
 
     }
@@ -409,9 +380,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return;
         }
         Location location = getLastKnownLocation(); //locationManager.getLastKnownLocation(bestProvider);
-        double l1= location.getLatitude();
+        double l1 = location.getLatitude();
 
-        double l2 =  location.getLongitude();
+        double l2 = location.getLongitude();
         LatLng currentlocation = new LatLng(l1, l2);
 
 
@@ -424,7 +395,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         //changes for marshmallow
-        /*else{
+   /*     else{
             locationManager.requestLocationUpdates(bestProvider, 1000, 0, this);
         }
 
@@ -435,7 +406,63 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     }
-    private void loadNumber(String placeid){
+
+    private void showBottomSheetDialog() {
+  /*      RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewMaps);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+        mAdapter = new ItemAdapter(createItems(), this);
+        recyclerView.setAdapter(mAdapter);*/
+
+
+        // mAdapter.notifyDataSetChanged();
+        if (behavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        }
+
+        mBottomSheetDialog = new BottomSheetDialog(this);
+        View view = getLayoutInflater().inflate(R.layout.sheet, null);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+        recyclerView.setAdapter(new ItemAdapter(createItems(), new ItemAdapter.ItemListener() {
+            @Override
+            public void onItemClick(Item item) {
+                if (mBottomSheetDialog != null) {
+                    mBottomSheetDialog.dismiss();
+
+
+                    double lat = item.getLatitude();
+                    double lng = item.getLongitude();
+
+
+                    LatLng latLng = new LatLng(lat, lng);
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+
+                    mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.gaspump32))
+                            .title(item.getmTitle())).showInfoWindow();
+
+                }
+            }
+        }));
+        recyclerView.invalidate();
+
+        mBottomSheetDialog.setContentView(view);
+        mBottomSheetDialog.show();
+        mBottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                mBottomSheetDialog = null;
+            }
+        });
+    }
+
+    private void loadNumber(String placeid) {
 
         StringBuilder googlePlacesNumberUrl =
                 new StringBuilder("https://maps.googleapis.com/maps/api/place/details/json?");
@@ -494,11 +521,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
 
                     //id = place.getString(SUPERMARKET_ID);
-                   // place_id = place.getString(PLACE_ID);
-                   /* if((place.getJSONObject(GEOMETRY)).getDouble(rating)){
-                        rating="0";
-                    }else{
-                    rating = (place.getString(RATING));}
+                    // place_id = place.getString(PLACE_ID);
+//                    if((place.getJSONObject(GEOMETRY)).getDouble(rating)){
+//                        rating="0";
+//                    }else{
+//                    rating = (place.getString(RATING));}
 
 //                    if (!place.isNull(RATING)) {
 //                        rating = place.getString(RATING);
@@ -522,12 +549,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //                    reference = place.getString(REFERENCE);
 //                    icon = place.getString(ICON);
 
-                    if ((place.getString(RATING).isEmpty()))
-                    {
-                        rating ="No Rating Available";
-
-                    }else{
-                    rating = (place.getString(RATING));}*/
+//                    if ((place.getString(RATING).isEmpty()))
+//                    {
+//                        rating ="No Rating Available";
+//
+//                    }else{
+//                    rating = (place.getString(RATING));}
 
                     Log.d("number ", "number " + number);
                     //Log.d("image ", "image URL" + icon);
@@ -560,11 +587,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
 
 
-              //  Toast.makeText(getBaseContext(), jsonArray.length() + " Petrol Pumps found!",
-               //         Toast.LENGTH_LONG).show();
+                //  Toast.makeText(getBaseContext(), jsonArray.length() + " Petrol Pumps found!",
+                //         Toast.LENGTH_LONG).show();
             } else if (result.getString(STATUS).equalsIgnoreCase(ZERO_RESULTS)) {
-               // Toast.makeText(getBaseContext(), "No Petrol Pumps found in 5KM radius!!!",
-            //            Toast.LENGTH_LONG).show();
+                // Toast.makeText(getBaseContext(), "No Petrol Pumps found in 5KM radius!!!",
+                //            Toast.LENGTH_LONG).show();
             }
 
         } catch (JSONException e) {
@@ -573,7 +600,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             Log.e(TAG, "parseLocationResult: Error=" + e.getMessage());
         }
     }
-
 
 
     private void loadNearByPlaces(double latitude, double longitude) {
@@ -593,11 +619,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // googlePlacesUrl.append("&name=pump");
         googlePlacesUrl.append("&key=" + GOOGLE_BROWSER_API_KEY);
-
-
-
-
-
 
 
         JsonObjectRequest request = new JsonObjectRequest(googlePlacesUrl.toString(),
@@ -626,11 +647,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         double latitude, longitude;
         int count = 1;
         Location loc = getLastKnownLocation();
-        double  latC = loc.getLatitude();
+        double latC = loc.getLatitude();
         double lonC = loc.getLongitude();
 
-
-
+        items.clear();
 
         try {
             JSONArray jsonArray = result.getJSONArray("results");
@@ -644,10 +664,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     id = place.getString(SUPERMARKET_ID);
                     place_id = place.getString(PLACE_ID);
-                    if((place.getJSONObject(GEOMETRY)).getBoolean(rating)){
-                        rating="0";
-                    }else{
-                    rating = (place.getString(RATING));}
+//                    if((place.getJSONObject(GEOMETRY)).getDouble(rating)){
+//                        rating="0";
+//                    }else{
+//                    rating = (place.getString(RATING));}
 
                     if (!place.isNull(RATING)) {
                         rating = place.getString(RATING);
@@ -670,7 +690,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             .getDouble(LONGITUDE);
                     reference = place.getString(REFERENCE);
                     icon = place.getString(ICON);
-
 
 
                     Log.d("rating ", "rating " + rating);
@@ -698,7 +717,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     distance = Float.valueOf(String.valueOf(distance * 0.001));
                     String distanceMap = String.format("%.2f", distance);
 
-                    items.add(new Item(android.R.drawable.star_on, placeName ,vicinity, "Distance: " + distanceMap+" Kms", latitude, longitude));
+
+                    items.add(new Item(R.drawable.circular_shape, placeName, vicinity, "Distance: " + distanceMap + " Kms", latitude, longitude));
 
 
                     count = count + 1;
@@ -719,15 +739,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    public static float distFrom (float lat1, float lng1, float lat2, float lng2 )
-    {
+    public static float distFrom(float lat1, float lng1, float lat2, float lng2) {
         double earthRadius = 3958.75;
-        double dLat = Math.toRadians(lat2-lat1);
-        double dLng = Math.toRadians(lng2-lng1);
-        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLng = Math.toRadians(lng2 - lng1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
                 Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-                        Math.sin(dLng/2) * Math.sin(dLng/2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                        Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double dist = earthRadius * c;
 
         int meterConversion = 1609;
@@ -749,7 +768,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 
 
-//        loadNearByPlaces(latitude, longitude);
+        loadNearByPlaces(latitude, longitude);
 
 
     }
@@ -787,7 +806,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         finish();
     }
-//do not delete
+
+    //do not delete // commented for autocomplete
     @Override
     protected void onPostResume() {
         super.onPostResume();
@@ -804,15 +824,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+  /*  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == RESULT_OK) {
                 Place place = PlacePicker.getPlace(data, this);
-                String toastMsg = String.format("Place: %s", place.getName(),place.getRating());
+                String toastMsg = String.format("Place: %s", place.getName(), place.getRating());
                 Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
             }
         }
+    }*/
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Place place = PlaceAutocomplete.getPlace(this, data);
@@ -820,13 +843,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 getSupportActionBar().setTitle("" + place.getName());
 
 
+
                 //adding marker to search location
                 LatLng latLng1 = place.getLatLng();
-                mMap.addMarker(new MarkerOptions().position(latLng1).title("" + place.getName()));
+
+
                 //   MapRipple mapRipple = new MapRipple(mMap, latLng, this);
                 //  mapRipple.startRippleMapAnimation();
-                ///mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng1));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng1));
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+                mMap.addMarker(new MarkerOptions().position(latLng1).title("" + place.getName()));
 
 
                 Log.i(TAG, "Place: " + place.getName());
@@ -840,7 +866,5 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
     }
-
-
 
 }

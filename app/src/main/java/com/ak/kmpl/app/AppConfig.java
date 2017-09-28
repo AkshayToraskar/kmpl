@@ -38,7 +38,7 @@ public final class AppConfig {
 
     // remember to change the browser api key
     public static final String GOOGLE_BROWSER_API_KEY =
-            "AIzaSyAQmUzFwfIO2NOJhDttlJLYsWwtRLGimRY";
+            "AIzaSyBig1mWsWhuNpCjZO6Qhqjie8MDWrxK2Vw";
     public static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     public static final int PROXIMITY_RADIUS = 5000; //5kms
     // The minimum distance to change Updates in meters
