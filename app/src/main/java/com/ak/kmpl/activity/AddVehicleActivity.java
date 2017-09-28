@@ -112,7 +112,7 @@ public class AddVehicleActivity extends AppCompatActivity implements AddVehicleD
         int id = item.getItemId();
         switch (id) {
             case android.R.id.home:
-                //finishAct();
+                finishAct();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -139,6 +139,8 @@ public class AddVehicleActivity extends AppCompatActivity implements AddVehicleD
                     //finishAct();
 
                 }
+
+                saveData();
                 finishAct();
 
                 break;
@@ -162,12 +164,19 @@ public class AddVehicleActivity extends AppCompatActivity implements AddVehicleD
 
     public void finishAct() {
 
+
+        Intent i = new Intent(AddVehicleActivity.this, ShowRecorsActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+    }
+
+    public void saveData() {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
 
-                if(vehicle==null){
-                    vehicle=realm.createObject(Vehicle.class, new Date().getTime());
+                if (vehicle == null) {
+                    vehicle = realm.createObject(Vehicle.class, new Date().getTime());
 
                 }
 
@@ -187,10 +196,6 @@ public class AddVehicleActivity extends AppCompatActivity implements AddVehicleD
                 mAdapter.notifyDataSetChanged();
             }
         });
-
-        Intent i = new Intent(AddVehicleActivity.this, ShowRecorsActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(i);
     }
 
 

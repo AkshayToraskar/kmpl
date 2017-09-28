@@ -10,11 +10,40 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.ak.kmpl.activity.BackupActivity">
 
-    <Button
+    <!--<Button
         android:id="@+id/btnBackup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onClickBtn"
-        android:text="Backup"/>
+        android:text="Backup"/>-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
 
+        <Button
+            android:id="@+id/btn_import"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:padding="5dp"
+            android:text="Import"
+            android:onClick="onClickBtn"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/btn_export"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            android:padding="5dp"
+            android:text="Export"
+            android:onClick="onClickBtn"
+            android:textColor="@color/white" />
+    </LinearLayout>
 </RelativeLayout>

@@ -109,16 +109,16 @@ public class MainActivity extends AppCompatActivity {
 
 
             case R.id.ivBackupData:
-                if (mFirebaseUser == null) {
-                    startActivity(new Intent(MainActivity.this, ProfileActivity.class));
-                } else {
-                    //startActivity(new Intent(MainActivity.this, BackupActivity.class));
+               // if (mFirebaseUser == null) {
+               //     startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+             //   } else {
+                    startActivity(new Intent(MainActivity.this, BackupActivity.class));
 
-                    dialog.setMessage("Please Wait");
-                    dialog.show();
+                  //  dialog.setMessage("Please Wait");
+                //    dialog.show();
 
-                    backupCustInfo();
-                }
+                //    backupCustInfo();
+               // }
                 break;
 
             case R.id.ivNotification:

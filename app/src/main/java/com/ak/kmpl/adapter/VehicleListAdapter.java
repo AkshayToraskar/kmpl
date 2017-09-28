@@ -33,6 +33,7 @@ import com.ak.kmpl.realm_model.VehicleRecords;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
 import io.realm.RealmList;
 
 /**
@@ -51,6 +52,8 @@ public class VehicleListAdapter extends RecyclerView.Adapter<VehicleListAdapter.
     public Vehicle vehicle;
     AddVehicleData addVehicleData;
     PrefManager prfManager;
+
+    Realm realm;
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder// implements AdapterView.OnItemSelectedListener
@@ -139,6 +142,7 @@ public class VehicleListAdapter extends RecyclerView.Adapter<VehicleListAdapter.
     public VehicleListAdapter(List<Vehicle> mDataset, AddVehicleData addVehicleData) {
         this.mDataset = mDataset;
         this.addVehicleData = addVehicleData;
+        realm = Realm.getDefaultInstance();
     }
 
     @Override
@@ -168,9 +172,9 @@ public class VehicleListAdapter extends RecyclerView.Adapter<VehicleListAdapter.
         holder.tvName.setText(" " + mDataset.get(position).getName());
 
         if (mDataset.get(position).getType() == 0) {
-            holder.ivType.setImageResource(R.drawable.car_icon);
-        } else {
             holder.ivType.setImageResource(R.drawable.bike_icon);
+        } else {
+            holder.ivType.setImageResource(R.drawable.car_icon);
         }
 
         holder.spinner.setSelection(mDataset.get(position).getSpinnerPos());
@@ -313,6 +317,13 @@ public class VehicleListAdapter extends RecyclerView.Adapter<VehicleListAdapter.
                         for (int i = 0; i < vehiclesRecords.size(); i++) {
                             vehiclesRecords.get(i).delete();
                         }*/
+
+                        realm.executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                mDataset.get(position).deleteFromRealm();
+                            }
+                        });
 
                         if (position == prfManager.getDefaultVehicle()) {
                             prfManager.setDefaultVehicle(0);

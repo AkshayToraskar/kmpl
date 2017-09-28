@@ -267,14 +267,14 @@ public class ShowRecorsActivity extends AppCompatActivity implements SheetLayout
                 .orderBy("id Desc")
                 .where("V_Id = ?", new String[]{vid}).list();*/
 
-        int sum = 0;
+        float sum = 0;
         float avgSum = 0, totalAverage;
 
 
-       /* for (int i = 0; i < vehiclesRecords.size(); i++) {
+        for (int i = 0; i < vehiclesRecords.size(); i++) {
             sum = sum + vehiclesRecords.get(i).getAmt();
             avgSum = avgSum + vehiclesRecords.get(i).getAverage();
-        }*/
+        }
 
         totalAverage = avgSum / vehiclesRecords.size();
 
